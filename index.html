@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bill Brien Retreat — Case 1: Malignant Hematology</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#ffffff;--bg2:#f5f5f4;--bg3:#fafaf9;--t:#1c1c1a;--t2:#6b6b66;--t3:#9c9a92;--bd:#e5e5e2;--bd2:#d4d4cf;--info:#1570b8;--infobg:#e6f1fb;--danger:#a32d2d;--dangerbg:#fcebeb;--warn:#854f0b;--warnbg:#faeeda;--teal:#0f6e56;--tealbg:#e1f5ee;--purple:#534ab7;--purplebg:#eeedfe;--coral:#993c1d;--coralbg:#faece7;--r:8px;--rl:12px;--f:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;--fm:"SF Mono",Menlo,Consolas,monospace}
+@media(prefers-color-scheme:dark){:root{--bg:#1a1a18;--bg2:#2c2c2a;--bg3:#222220;--t:#e8e6dd;--t2:#9c9a92;--t3:#6b6b66;--bd:#3d3d3a;--bd2:#52524e;--infobg:#0c2d4a;--dangerbg:#3a1515;--warnbg:#2e1e08;--tealbg:#042e24;--purplebg:#1e1a3e;--coralbg:#2e1508}}
+body{font-family:var(--f);background:var(--bg3);color:var(--t);line-height:1.6;min-height:100vh}
+.app{max-width:760px;margin:0 auto;padding:16px 20px}
+.nav{display:flex;gap:3px;padding:8px 0 16px;border-bottom:1px solid var(--bd);overflow-x:auto;-webkit-overflow-scrolling:touch}
+.nav button{padding:5px 9px;font-size:11px;border:none;border-radius:var(--r);cursor:pointer;white-space:nowrap;font-family:var(--f);transition:all .15s}
+.nav button.active{background:var(--infobg);color:var(--info);font-weight:600}
+.nav button.done{background:transparent;color:var(--t2)}
+.nav button.future{background:transparent;color:var(--t3);opacity:.5}
+.content{padding:24px 0}
+.card{background:var(--bg);border:1px solid var(--bd);border-radius:var(--rl);padding:20px;margin-bottom:16px}
+.card.ac-teal{border:2px solid var(--teal)}
+.card.ac-info{border:2px solid var(--info)}
+.card.ac-danger{border:2px solid var(--danger)}
+.card.ac-warn{border:2px solid var(--warn)}
+.badge{display:inline-block;font-size:11px;font-weight:600;padding:3px 10px;border-radius:var(--r);letter-spacing:.04em;text-transform:uppercase}
+.badge-info{background:var(--infobg);color:var(--info)}
+.badge-danger{background:var(--dangerbg);color:var(--danger)}
+.badge-warn{background:var(--warnbg);color:var(--warn)}
+.badge-teal{background:var(--tealbg);color:var(--teal)}
+.badge-purple{background:var(--purplebg);color:var(--purple)}
+h2{font-size:20px;font-weight:600;margin-bottom:4px}
+.sub{font-size:13px;color:var(--t2);margin-bottom:16px}
+.prompt{background:var(--bg2);border-left:3px solid var(--teal);border-radius:0 var(--r) var(--r) 0;padding:12px 16px;margin-bottom:12px;font-size:14px}
+.prompt .q{font-weight:600;color:var(--t)}
+.prompt .time{font-size:12px;color:var(--t3);margin-top:4px}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+.finding{padding:10px 12px;background:var(--bg2);border-radius:var(--r);font-size:13px}
+.finding.flag{background:var(--warnbg)}
+.finding .lb{font-weight:600;margin-bottom:2px}
+.finding .vl{color:var(--t2)}
+img.case-img{width:100%;border-radius:var(--r);margin:8px 0;cursor:pointer;transition:transform .2s}
+img.case-img:active{transform:scale(1.5);z-index:10;position:relative}
+.img-caption{font-size:12px;color:var(--t3);text-align:center;margin:-4px 0 12px}
+.menti-card{background:linear-gradient(135deg,#5d3fd3 0%,#7c5ce7 100%);color:#fff;border-radius:var(--rl);padding:20px;margin:16px 0;text-align:center}
+.menti-card h3{font-size:18px;font-weight:600;margin-bottom:8px}
+.menti-card .code{font-size:36px;font-weight:700;letter-spacing:.15em;margin:8px 0}
+.menti-card .url{font-size:14px;opacity:.85;margin-bottom:4px}
+.menti-card .desc{font-size:13px;opacity:.7}
+.mt-table{border:1px solid var(--bd);border-radius:var(--r);overflow:hidden;margin-bottom:16px}
+.mt-hdr{display:grid;grid-template-columns:70px 1fr 1fr 65px 55px;gap:8px;padding:6px 12px;font-size:11px;font-weight:600;color:var(--t3);background:var(--bg2);text-transform:uppercase;letter-spacing:.04em}
+.mt-row{display:grid;grid-template-columns:70px 1fr 1fr 65px 55px;gap:8px;padding:8px 12px;font-size:13px;border-top:1px solid var(--bd);align-items:center}
+.mt-row .gene{font-weight:600}
+.mt-row .cod{font-family:var(--fm);font-size:12px;color:var(--t2)}
+.mt-row .prot{font-family:var(--fm);font-size:12px}
+.mt-row .vaf{font-weight:600;color:var(--warn)}
+.db-card{cursor:pointer;transition:transform .1s}
+.db-card:hover{transform:translateY(-1px)}
+.slider-group{display:flex;align-items:center;gap:12px;margin-bottom:12px}
+.slider-group label{font-size:13px;color:var(--t2);min-width:130px}
+.slider-group input[type=range]{flex:1;accent-color:var(--teal)}
+.slider-group .val{font-size:14px;font-weight:600;min-width:48px;text-align:right}
+.metric{background:var(--bg2);border-radius:var(--r);padding:12px;text-align:center}
+.metric .lb{font-size:12px;color:var(--t2)}
+.metric .num{font-size:24px;font-weight:600;margin-top:2px}
+.timeline{padding-left:24px;position:relative}
+.timeline::before{content:'';position:absolute;left:10px;top:14px;bottom:14px;width:2px;background:var(--bd);border-radius:1px}
+.timeline .tp{display:flex;gap:16px;margin-bottom:18px;position:relative}
+.timeline .dot{width:16px;height:16px;border-radius:50%;flex-shrink:0;margin-top:3px;position:relative;z-index:1}
+.timeline .dot.empty{background:var(--bg2);border:2px solid var(--bd2)}
+.timeline .dot.warn{background:var(--warnbg);border:2px solid var(--coral)}
+.spectrum-bar{display:flex;height:40px;border-radius:var(--r);overflow:hidden;margin-bottom:8px;position:relative}
+.spectrum-bar .zone{flex:1;display:flex;align-items:center;justify-content:center;color:#fff;font-size:11px;font-weight:600}
+.spectrum-bar .marker{position:absolute;top:-8px;transform:translateX(-50%);width:0;height:0;border-left:7px solid transparent;border-right:7px solid transparent;border-top:9px solid var(--t);transition:left .3s}
+.cr-row{padding:8px 10px;margin-bottom:4px;border-radius:var(--r);background:var(--bg2);font-size:13px;line-height:1.5;transition:background .2s}
+.cr-row:hover{background:var(--infobg)}
+.cr-row .tl{font-weight:600}
+.cr-row .dt{color:var(--t2);font-size:12px}
+.cr-row .nt{color:var(--t3);font-size:11px;font-style:italic;margin-top:2px}
+.footer{display:flex;justify-content:space-between;align-items:center;padding:16px 0;margin-top:24px;border-top:1px solid var(--bd)}
+.footer .ctr{font-size:12px;color:var(--t3)}
+.btn{padding:8px 22px;font-size:14px;border-radius:var(--r);cursor:pointer;font-family:var(--f);transition:all .15s}
+.btn-o{border:1px solid var(--bd2);background:transparent;color:var(--t)}
+.btn-o:hover{background:var(--bg2)}
+.btn-o:disabled{opacity:.3;cursor:not-allowed}
+.btn-p{border:none;background:var(--info);color:#fff;font-weight:600}
+.btn-p:hover{opacity:.9}
+.btn-p:disabled{background:var(--bd);color:var(--t3);cursor:not-allowed}
+.btn-reveal{padding:14px 32px;font-size:17px;font-weight:600;background:linear-gradient(135deg,#1570b8,#0f6e56);color:#fff;border:none;border-radius:var(--r);cursor:pointer;box-shadow:0 4px 12px rgba(0,0,0,.15)}
+.btn-reveal:hover{transform:translateY(-1px);box-shadow:0 6px 16px rgba(0,0,0,.2)}
+.ihc-card{padding:10px 12px;background:var(--bg2);border-radius:var(--r);margin-bottom:8px}
+.ihc-card .hd{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:4px}
+.ihc-card .var{font-weight:600;font-size:13px;font-family:var(--fm)}
+.cbc-grid{display:grid;grid-template-columns:1fr repeat(2,120px);gap:0;border:1px solid var(--bd);border-radius:var(--r);overflow:hidden;font-size:13px}
+.cbc-grid .hdr{background:var(--bg2);padding:6px 10px;font-weight:600;border-bottom:1px solid var(--bd)}
+.cbc-grid .cell{padding:6px 10px;border-bottom:1px solid var(--bd);border-left:1px solid var(--bd)}
+.cbc-grid .cell.danger{color:var(--danger);font-weight:600}
+.lightbox{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.85);z-index:100;display:flex;align-items:center;justify-content:center;cursor:zoom-out;padding:20px}
+.lightbox img{max-width:95%;max-height:95%;border-radius:8px;box-shadow:0 8px 32px rgba(0,0,0,.5)}
+@media(max-width:600px){
+  .g2{grid-template-columns:1fr}
+  .g3{grid-template-columns:1fr}
+  .mt-hdr,.mt-row{grid-template-columns:60px 1fr 1fr 55px 45px;font-size:11px}
+  .cbc-grid{grid-template-columns:1fr repeat(2,90px);font-size:12px}
+  .nav button{font-size:10px;padding:4px 6px}
+  h2{font-size:18px}
+}
+.vaf-scenarios{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:6px;margin-bottom:12px}
+.vaf-sc{padding:8px;border:1px solid var(--bd);border-radius:var(--r);cursor:pointer;font-size:12px;line-height:1.4;background:var(--bg);transition:all .15s}
+.vaf-sc:hover{border-color:var(--bd2);background:var(--bg2)}
+.vaf-sc.active{border:2px solid var(--info);background:var(--infobg)}
+.vaf-sc .sn{font-weight:600;font-size:12px;margin-bottom:1px}
+.vaf-sc .sd{color:var(--t2);font-size:11px}
+.vaf-formula{background:var(--bg2);border-radius:var(--rl);padding:12px 16px;margin-bottom:12px;font-family:var(--fm);font-size:13px;line-height:2}
+.vaf-formula .hl{background:var(--infobg);color:var(--info);padding:1px 5px;border-radius:4px;font-weight:600}
+.vaf-formula .hw{background:var(--warnbg);color:var(--warn);padding:1px 5px;border-radius:4px;font-weight:600}
+.vaf-formula .hd{background:var(--dangerbg);color:var(--danger);padding:1px 5px;border-radius:4px;font-weight:600}
+.vaf-results{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:12px}
+.vaf-metric{background:var(--bg2);border-radius:var(--r);padding:10px;text-align:center}
+.vaf-metric .vml{font-size:11px;color:var(--t2)}
+.vaf-metric .vmn{font-size:22px;font-weight:600;margin-top:2px}
+.chr-vis{display:flex;gap:20px;justify-content:center;margin-bottom:12px}
+.chr-pair{text-align:center}
+.chr-pair .cl{font-size:11px;color:var(--t3);margin-bottom:4px}
+.chr-bars{display:flex;gap:3px;justify-content:center}
+.chr-b{width:16px;height:64px;border-radius:8px;border:1.5px solid var(--bd2)}
+.chr-b.wt{background:var(--bg2)}
+.chr-b.mut{background:#7F77DD}
+.chr-b.del{background:transparent;border-style:dashed;border-color:var(--bd);opacity:.4}
+.chr-b.dup{background:#AFA9EC;border-color:#7F77DD}
+.chr-pair .cc{font-size:11px;color:var(--t2);margin-top:3px}
+.vaf-rev{background:var(--bg);border:1px solid var(--bd);border-radius:var(--rl);padding:14px 16px;margin-bottom:12px}
+.vaf-rev .vrt{font-size:14px;font-weight:600;margin-bottom:10px}
+.case-btns{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px}
+.case-btn{padding:5px 12px;border:1px solid var(--bd);border-radius:var(--r);cursor:pointer;font-size:11px;font-family:var(--fm);background:var(--bg);color:var(--t);transition:all .15s}
+.case-btn:hover{background:var(--bg2);border-color:var(--bd2)}
+.vaf-note{font-size:12px;color:var(--t3);line-height:1.5;margin-top:6px}
+</style>
+</head>
+<body>
+<div class="app" id="app"></div>
+<div id="lb" style="display:none" class="lightbox" onclick="this.style.display='none'"></div>
+
+<script>
+function showLB(src){
+  const lb=document.getElementById('lb');
+  lb.innerHTML='<img src="'+src+'">';
+  lb.style.display='flex';
+}
+
+const STAGES=[
+{id:"s1",label:"Clinical",icon:"\u2460"},
+{id:"s2",label:"Blood smear",icon:"\u2461"},
+{id:"s3",label:"Bone marrow",icon:"\u2462"},
+{id:"s4",label:"Dry tap",icon:"\u2463"},
+{id:"s5",label:"NGS results",icon:"\u2464"},
+{id:"s6",label:"Database tasks",icon:"\u2465"},
+{id:"s7",label:"P53 IHC",icon:"\u2466"},
+{id:"s8",label:"AS-PCR + Consensus",icon:"\u2467"},
+{id:"s9",label:"JAK2 twist",icon:"\u2468"},
+{id:"s10",label:"CH vs MPN",icon:"\u2469"}
+];
+
+let S={stage:0,revealJAK2:false,spectrumVAF:2};
+
+function render(){
+const s=STAGES[S.stage];
+let nav=STAGES.map((st,i)=>{
+let cls=i===S.stage?'active':i<S.stage?'done':'future';
+return '<button class="'+cls+'" onclick="go('+i+')">'+st.icon+' '+st.label+'</button>';
+}).join('');
+
+let c='';
+switch(s.id){
+case 's1':c=sec1();break;case 's2':c=sec2();break;case 's3':c=sec3();break;
+case 's4':c=sec4();break;case 's5':c=sec5();break;case 's6':c=sec6();break;
+case 's7':c=sec7();break;case 's8':c=sec8();break;case 's9':c=sec9();break;
+case 's10':c=sec10();break;
+}
+
+let f='<div class="footer"><button class="btn btn-o" '+(S.stage===0?'disabled':'')+' onclick="prev()">\u2190 Previous</button><span class="ctr">'+(S.stage+1)+' / '+STAGES.length+'</span><button class="btn btn-p" '+(S.stage===STAGES.length-1?'disabled':'')+' onclick="next()">'+(S.stage===STAGES.length-1?'End':'Next \u2192')+'</button></div>';
+
+document.getElementById('app').innerHTML='<div class="nav">'+nav+'</div><div class="content">'+c+'</div>'+f;
+if(s.id==='s6'){initVafExplorer();}
+}
+
+function initVafExplorer(){
+var sc=document.getElementById('vaf-sc-container');
+if(!sc)return;
+sc.innerHTML='';
+VAF_SCENARIOS.forEach(function(s,i){
+var d=document.createElement('div');
+d.className='vaf-sc'+(i===vafSc?' active':'');
+d.innerHTML='<div class="sn">'+s.name+'</div><div class="sd">'+s.desc+'</div>';
+d.onclick=function(){vafSelectSc(i)};
+sc.appendChild(d);
+});
+var cb=document.getElementById('vaf-case-btns');
+if(cb){cb.innerHTML='';VAF_CASES.forEach(function(c,i){
+var b=document.createElement('button');
+b.className='case-btn';
+b.textContent=c.label+' (VAF '+c.vaf+'%)';
+b.onclick=function(){vafLoadCase(i)};
+cb.appendChild(b);
+});}
+vafUpdate();
+}
+
+function go(i){S.stage=i;render();window.scrollTo(0,0)}
+function next(){if(S.stage<STAGES.length-1){S.stage++;render();window.scrollTo(0,0)}}
+function prev(){if(S.stage>0){S.stage--;render();window.scrollTo(0,0)}}
+function revealJAK2(){S.revealJAK2=true;render()}
+function updateSV(v){S.spectrumVAF=+v;document.getElementById('sv').textContent=v+'%';document.getElementById('sm').style.left=Math.min(95,Math.max(5,v*3))+'%'}
+
+var VAF_SCENARIOS=[
+{name:'Diploid heterozygous',desc:'Standard somatic SNV',ct:2,m:1,chr:['wt','mut']},
+{name:'LOH by deletion',desc:'Lost wild-type allele',ct:1,m:1,chr:['del','mut']},
+{name:'Copy-neutral LOH',desc:'UPD: duplicated mutant',ct:2,m:2,chr:['mut','dup']},
+{name:'Gain of mutant',desc:'Trisomy, 2 mut + 1 WT',ct:3,m:2,chr:['wt','mut','dup']},
+{name:'Gain of wild-type',desc:'Trisomy, 1 mut + 2 WT',ct:3,m:1,chr:['wt','wt','mut']},
+{name:'Homozygous deletion',desc:'Both alleles lost',ct:0,m:0,chr:['del','del']},
+{name:'Tetraploid het',desc:'4 copies, 1 mutant',ct:4,m:1,chr:['wt','wt','wt','mut']},
+{name:'Biallelic (2 hits)',desc:'Two different mutations',ct:2,m:2,chr:['mut','dup']}
+];
+var VAF_CASES=[
+{label:'TP53 splice c.673-2A>G',vaf:4.1,pur:80},
+{label:'TP53 R175H',vaf:2.2,pur:80},
+{label:'TP53 K132M',vaf:3.4,pur:80},
+{label:'JAK2 V617F (Jan)',vaf:1,pur:80},
+{label:'JAK2 V617F (Nov)',vaf:9,pur:80}
+];
+var vafSc=0;
+
+function vafCalcExpected(p,ccf,ct,m){
+if(ct===0)return 0;
+var num=(p/100)*(ccf/100)*m;
+var den=(p/100)*ct+(1-p/100)*2;
+return den===0?0:(num/den)*100;
+}
+function vafCalcCCF(obsVaf,p,ct,m){
+if(m===0)return null;
+var den=(p/100)*ct+(1-p/100)*2;
+return Math.min(((obsVaf/100)*den)/((p/100)*m)*100,999);
+}
+function vafSelectSc(i){
+vafSc=i;
+var s=VAF_SCENARIOS[i];
+document.getElementById('vaf-ct').value=s.ct;
+document.getElementById('vaf-m').value=s.m;
+document.getElementById('vaf-m').max=Math.max(s.ct,0);
+document.querySelectorAll('.vaf-sc').forEach(function(el,j){el.className='vaf-sc'+(j===i?' active':'')});
+vafUpdate();
+}
+function vafLoadCase(i){
+var c=VAF_CASES[i];
+document.getElementById('vaf-pur').value=c.pur;
+document.getElementById('vaf-obs').value=c.vaf;
+vafSc=0;
+document.getElementById('vaf-ct').value=2;
+document.getElementById('vaf-m').value=1;
+document.getElementById('vaf-m').max=2;
+document.querySelectorAll('.vaf-sc').forEach(function(el,j){el.className='vaf-sc'+(j===0?' active':'')});
+vafUpdate();
+}
+function vafUpdate(){
+var p=+document.getElementById('vaf-pur').value;
+var ccf=+document.getElementById('vaf-ccf').value;
+var ct=+document.getElementById('vaf-ct').value;
+var m=Math.min(+document.getElementById('vaf-m').value,ct);
+document.getElementById('vaf-m').value=m;
+document.getElementById('vaf-m').max=Math.max(ct,0);
+document.getElementById('vaf-pur-v').textContent=p+'%';
+document.getElementById('vaf-ccf-v').textContent=ccf+'%';
+document.getElementById('vaf-ct-v').textContent=ct;
+document.getElementById('vaf-m-v').textContent=m;
+var vaf=vafCalcExpected(p,ccf,ct,m);
+var pureVaf=ct>0?Math.round(m/ct*100):0;
+document.getElementById('vaf-res').innerHTML='<div class="vaf-metric"><div class="vml">Expected VAF</div><div class="vmn" style="color:var(--info)">'+Math.round(vaf*10)/10+'%</div></div><div class="vaf-metric"><div class="vml">Mutant : total</div><div class="vmn">'+m+' : '+ct+'</div></div><div class="vaf-metric"><div class="vml">If 100% pure</div><div class="vmn">'+(ct>0?pureVaf+'%':'N/A')+'</div></div>';
+document.getElementById('vaf-form').innerHTML='VAF = (<span class="hl">p</span> \u00d7 <span class="hw">CCF</span> \u00d7 <span class="hd">m</span>) \u00f7 (<span class="hl">p</span> \u00d7 Ct + (1\u2212<span class="hl">p</span>) \u00d7 2)<br>VAF = (<span class="hl">'+(p/100)+'</span> \u00d7 <span class="hw">'+(ccf/100)+'</span> \u00d7 <span class="hd">'+m+'</span>) \u00f7 (<span class="hl">'+(p/100)+'</span> \u00d7 '+ct+' + '+(1-p/100).toFixed(2)+' \u00d7 2)<br>VAF = <strong style="font-size:15px">'+Math.round(vaf*10)/10+'%</strong>';
+var s=VAF_SCENARIOS[vafSc];
+var ch='<div class="chr-pair"><div class="cl">Tumor cell</div><div class="chr-bars">';
+s.chr.forEach(function(c){ch+='<div class="chr-b '+c+'"></div>'});
+ch+='</div><div class="cc">'+ct+' copies, '+m+' mutant</div></div><div class="chr-pair"><div class="cl">Normal cell</div><div class="chr-bars"><div class="chr-b wt"></div><div class="chr-b wt"></div></div><div class="cc">2 copies, 0 mutant</div></div>';
+document.getElementById('vaf-chr').innerHTML=ch;
+vafReverse();
+}
+function vafReverse(){
+var obs=+document.getElementById('vaf-obs').value;
+var p=+document.getElementById('vaf-pur').value;
+var ct=+document.getElementById('vaf-ct').value;
+var m=Math.min(+document.getElementById('vaf-m').value,ct);
+document.getElementById('vaf-obs-v').textContent=obs+'%';
+var ccfE=vafCalcCCF(obs,p,ct,m);
+var disp='N/A',note='';
+if(ccfE===null||m===0){note='Cannot estimate with 0 mutant copies.';}
+else if(ccfE>100){disp='>100%';note='CCF exceeds 100% \u2014 consider LOH, copy gain of mutant allele, or lower purity than estimated.';}
+else{disp=Math.round(ccfE)+'%';note=ccfE>90?'Likely clonal (present in nearly all tumor cells).':ccfE>50?'Present in a major subclone.':'Subclonal \u2014 present in a minority of tumor cells.';}
+document.getElementById('vaf-rev-res').innerHTML='<div class="vaf-metric"><div class="vml">Observed VAF</div><div class="vmn">'+obs+'%</div></div><div class="vaf-metric"><div class="vml">Estimated CCF</div><div class="vmn" style="color:var(--warn)">'+disp+'</div></div><div class="vaf-metric"><div class="vml">Allelic state</div><div class="vmn" style="font-size:13px">'+VAF_SCENARIOS[vafSc].name+'</div></div>';
+document.getElementById('vaf-rev-note').textContent=note;
+}
+
+function img(name,caption){
+return '<img class="case-img" src="images/'+name+'" alt="'+caption+'" onclick="showLB(this.src)" loading="lazy"><div class="img-caption">'+caption+' <span style="font-size:11px;color:var(--info)">(tap to zoom)</span></div>';
+}
+
+function menti(pollNum,question){
+return '<div class="menti-card"><h3>\u2705 Time to Vote \u2014 Poll #'+pollNum+'</h3><div class="desc" style="margin-bottom:12px">'+question+'</div><a href="https://www.menti.com/alxg4a5s3db4" target="_blank" style="display:inline-block;padding:12px 32px;background:#fff;color:#5d3fd3;font-weight:700;font-size:16px;border-radius:8px;text-decoration:none;margin:8px 0">Tap here to vote</a><div style="font-size:13px;opacity:.75;margin-top:8px">Or go to <strong>menti.com</strong> \u2192 code <strong>2507 4415</strong></div></div>';
+}
+
+function prompt(q,time){
+return '<div class="prompt"><div class="q">'+q+'</div>'+(time?'<div class="time">'+time+'</div>':'')+'</div>';
+}
+
+// ===== SECTIONS =====
+
+function sec1(){
+return '<div style="text-align:center;padding:1.5rem 0"><div style="font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--t3);margin-bottom:6px">Bill Brien Retreat \u00b7 May 11, 2026</div><h1 style="font-size:26px;font-weight:600;margin-bottom:6px">Case 1: Malignant Hematology</h1><p style="font-size:14px;color:var(--t2)">An interactive NGS case</p></div>'
+
++'<h2>Clinical Presentation</h2><div class="sub">Read the vignette, then discuss at your table</div>'
+
++'<div class="card" style="font-size:15px;line-height:1.8"><p style="margin-bottom:12px"><strong>60-year-old female</strong> with no relevant past medical history</p><p style="margin-bottom:12px">Presenting with <strong>abrupt onset weakness</strong></p><p style="margin-bottom:12px">Found to have <strong style="color:var(--danger)">pancytopenia</strong></p><p style="margin-bottom:12px">No constitutional symptoms</p><p>No splenomegaly (recent ultrasound, spleen 11 cm)</p></div>'
+
++'<h2 style="margin-top:20px">CBCs</h2><div class="sub">Two time points available</div>'
++img('cbc_table.png','CBC values: August 2025 vs February 2026')
+
++'<div class="cbc-grid"><div class="hdr"></div><div class="hdr" style="text-align:center">Aug 2025</div><div class="hdr" style="text-align:center">Feb 2026</div><div class="cell"><strong>Hb (g/L)</strong></div><div class="cell" style="text-align:center">139</div><div class="cell danger" style="text-align:center">59</div><div class="cell"><strong>Plt (\u00d710\u2079/L)</strong></div><div class="cell" style="text-align:center">242</div><div class="cell danger" style="text-align:center">39</div><div class="cell"><strong>WBC (\u00d710\u2079/L)</strong></div><div class="cell" style="text-align:center">2.5</div><div class="cell danger" style="text-align:center">0.2</div></div>';
+}
+
+function sec2(){
+return '<h2>Blood Smear</h2><div class="sub">Peripheral blood morphology</div>'
++img('blood_smear.jpg','Peripheral blood smear')
++prompt("What do you see on the blood smear?","Discuss for 2 minutes")
++prompt("Do these findings narrow your differential?")
++'<div class="card"><div style="font-weight:600;font-size:15px;margin-bottom:8px">Key findings to look for</div><div style="font-size:14px;line-height:1.8;color:var(--t2)">\u25a1 Red cell morphology \u2014 dacrocytes (teardrop cells)?<br>\u25a1 White cell precursors \u2014 leukoerythroblastic picture?<br>\u25a1 Platelet morphology \u2014 giant or abnormal forms?<br>\u25a1 Nucleated red cells?</div></div>';
+}
+
+function sec3(){
+return '<h2>Bone Marrow Biopsy</h2><div class="sub">A bone marrow biopsy was performed</div>'
++img('bm_biopsy_overview.jpg','Bone marrow trephine biopsy \u2014 overview')
++'<div class="g2">'
++img('morphology_1.jpg','H&E morphology \u2014 view 1')
++img('morphology_2.jpg','H&E morphology \u2014 view 2')
++'</div>'
++img('factor_viii.jpg','Factor VIII immunohistochemistry')
++img('reticulin.jpg','Reticulin stain')
+
++'<div class="card ac-teal"><div style="font-weight:600;font-size:15px;margin-bottom:10px">Morphology Checklist</div><div style="font-size:14px;line-height:2;color:var(--t2)">\u25a1 Is this hypercellular for age?<br>\u25a1 Are the megakaryocytes increased?<br>\u25a1 Megakaryocytes, mega-important!<br>\u25a1 Chubby and cuddly?<br>\u25a1 Clustered, mean and scary?<br>\u25a1 I don\u2019t know\u2026<br>\u25a1 Are there increased blasts?<br>\u25a1 I need cytogenetics / molecular!<br>\u25a1 I need CBCs<br>\u25a1 Convinced MPN?</div></div>'
+
++menti(1,"What is your initial morphologic impression?<br>MPN? MDS? MDS/MPN? Need more info?");
+}
+
+function sec4(){
+return '<h2>The Dry Tap Problem</h2><div class="sub">The aspirate was unsuccessful</div>'
++img('dry_tap.jpg','Dry tap \u2014 bone marrow aspirate')
++'<div class="card ac-danger"><div style="display:flex;align-items:center;gap:12px"><div style="font-size:28px">\u26a0</div><div><div style="font-weight:600;font-size:15px">Dry tap \u2014 no aspirate obtained</div><div style="font-size:13px;color:var(--t2);margin-top:4px">What happens to your workup?</div></div></div></div>'
+
++prompt("Does your institution have an automatic/reflex lab protocol for managing dry taps or poor aspirates?","Discuss for 3 minutes")
+
++'<div class="card"><div style="font-weight:600;font-size:15px;margin-bottom:12px">Recommendations</div><div style="font-size:14px;line-height:1.7;color:var(--t2)"><p style="margin-bottom:8px">Obtain a second bone marrow biopsy as some labs may:</p><div class="g2"><div class="finding"><div class="lb">Disaggregate for flow cytometry</div><div class="vl">Core biopsy material can be processed</div></div><div class="finding"><div class="lb">Process for molecular salvage</div><div class="vl">Validation in progress at Sunnybrook</div></div></div></div></div>'
+
++'<h2 style="margin-top:20px">Additional Workup</h2><div class="sub">CD34, touch imprints, cytogenetics</div>'
++img('cd34.jpg','CD34 immunohistochemistry')
++img('touch_imprints.jpg','Touch imprints from core biopsy')
+
++'<div class="card"><div style="font-weight:600;font-size:15px;margin-bottom:8px">Genomic Investigations</div><div class="g2" style="font-size:14px"><div class="finding flag"><div class="lb">Karyotype (G-banding)</div><div class="vl" style="color:var(--danger);font-weight:600">FAILURE</div></div><div class="finding"><div class="lb">FISH probes</div><div class="vl">Do you know what FISH probes are reflexed at your cytogenetics lab?</div></div></div></div>'
+
++prompt("What FISH probes does your institution reflex for suspected MDS/MPN?");
+}
+
+function sec5(){
+return '<h2>NGS Results Revealed</h2><div class="sub">Myeloid biomarker panel</div>'
+
++'<div class="card"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px"><div style="font-weight:600;font-size:15px">Clinically Actionable Variants (Tier 1/2) \u2014 DNA Assay</div><span class="badge badge-danger">3 variants</span></div><div class="mt-table"><div class="mt-hdr"><span>Gene</span><span>Coding</span><span>Protein</span><span>VAF</span><span>Tier</span></div><div class="mt-row"><span class="gene">TP53</span><span class="cod">c.673-2A&gt;G</span><span class="prot">p.? (splice)</span><span class="vaf">4.1%</span><span class="badge badge-danger">1/2</span></div><div class="mt-row"><span class="gene">TP53</span><span class="cod">c.524G&gt;A</span><span class="prot">p.Arg175His</span><span class="vaf">2.2%</span><span class="badge badge-danger">1/2</span></div><div class="mt-row"><span class="gene">TP53</span><span class="cod">c.395A&gt;T</span><span class="prot">p.Lys132Met</span><span class="vaf">3.4%</span><span class="badge badge-danger">1/2</span></div></div></div>'
+
++'<div class="card"><div style="font-weight:600;font-size:15px;margin-bottom:8px">RNA Assay</div><div style="font-size:14px;color:var(--t2)">RNA transcript variants: <strong>NOT IDENTIFIED</strong></div></div>'
+
++prompt("What do these variants mean? Are you missing any information?")
++prompt("Is NGS a DNA or RNA test? Why run both?")
+
++'<div class="card ac-warn"><div style="font-weight:600;font-size:15px;margin-bottom:8px">Discussion: Why NGS on both DNA and RNA?</div><div style="font-size:13px;line-height:1.7;color:var(--t2)"><p style="margin-bottom:8px"><strong>DNA panel:</strong> Detects point mutations, small indels, splice site variants. Cannot detect gene fusions without breakpoint primers.</p><p><strong>RNA panel:</strong> Detects fusion transcripts (e.g. BCR::ABL1, PML::RARA, KMT2A fusions) regardless of genomic breakpoint. Essential for AML/ALL where fusions are diagnostic and therapeutic targets.</p></div></div>'
+
++'<h2 style="margin-top:20px">But wait\u2026 what\u2019s the VAF?</h2><div class="sub">Why are these VAFs so low?</div>'
++prompt("What is the tumor content in this sample?")
++img('tumor_content.jpg','Tumor cellularity assessment')
++img('tumor_diagram.png','VAF and cellularity relationship');
+}
+
+function sec6(){
+return '<h2>Hands-on: Explore the Mutations</h2><div class="sub">Search these databases on your device \u2014 10 minutes</div>'
+
++'<div class="card db-card" onclick="window.open(\'https://www.ncbi.nlm.nih.gov/clinvar/?term=TP53+Arg175His\',\'_blank\')"><div style="display:flex;align-items:flex-start;gap:12px"><div style="width:40px;height:40px;border-radius:var(--r);background:var(--bg2);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0">\ud83e\uddec</div><div style="flex:1"><div style="font-weight:600;font-size:15px;margin-bottom:4px">ClinVar \u2014 NCBI</div><div style="font-size:13px;color:var(--t2);line-height:1.5">Search for TP53 p.Arg175His (R175H). What is its clinical significance? Is it a hotspot? What conditions is it associated with?</div><div style="font-size:12px;color:var(--info);margin-top:6px">ncbi.nlm.nih.gov/clinvar \u2192</div></div></div></div>'
+
++'<div class="card db-card" onclick="window.open(\'https://varsome.com/variant/hg38/TP53%20R175H\',\'_blank\')"><div style="display:flex;align-items:flex-start;gap:12px"><div style="width:40px;height:40px;border-radius:var(--r);background:var(--bg2);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0">\ud83d\udd2c</div><div style="flex:1"><div style="font-weight:600;font-size:15px;margin-bottom:4px">VarSome \u2014 Variant Interpreter</div><div style="font-size:13px;color:var(--t2);line-height:1.5">Look up TP53 R175H. What ACMG classification does it receive? What is the population frequency? What functional evidence exists?</div><div style="font-size:12px;color:var(--info);margin-top:6px">varsome.com \u2192 (free, no login required)</div></div></div></div>'
+
++'<div class="card db-card" onclick="window.open(\'https://tp53.cancer.gov/\',\'_blank\')"><div style="display:flex;align-items:flex-start;gap:12px"><div style="width:40px;height:40px;border-radius:var(--r);background:var(--bg2);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0">\ud83d\udcca</div><div style="flex:1"><div style="font-weight:600;font-size:15px;margin-bottom:4px">IARC TP53 Database</div><div style="font-size:13px;color:var(--t2);line-height:1.5">The definitive TP53 mutation database. Search R175H, K132M, and the splice variant. Where do these rank among all TP53 mutations? What cancers do they appear in?</div><div style="font-size:12px;color:var(--info);margin-top:6px">tp53.cancer.gov \u2192 (free, NCI-hosted TP53 database)</div></div></div></div>'
+
++'<div class="card db-card" onclick="window.open(\'https://www.cbioportal.org/\',\'_blank\')"><div style="display:flex;align-items:flex-start;gap:12px"><div style="width:40px;height:40px;border-radius:var(--r);background:var(--bg2);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0">\ud83c\udf10</div><div style="flex:1"><div style="font-weight:600;font-size:15px;margin-bottom:4px">cBioPortal</div><div style="font-size:13px;color:var(--t2);line-height:1.5">Explore TP53 mutations in MDS datasets. Click \u201cQuery\u201d at top, select TCGA Pan-Cancer, enter TP53, then view the lollipop plot. How common is multi-hit TP53?</div><div style="font-size:12px;color:var(--info);margin-top:6px">cbioportal.org \u2192 (free, no login)</div></div></div></div>'
+
++'<div class="card db-card" onclick="window.open(\'https://www.oncokb.org/gene/TP53/R175H\',\'_blank\')"><div style="display:flex;align-items:flex-start;gap:12px"><div style="width:40px;height:40px;border-radius:var(--r);background:var(--bg2);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0">\ud83c\udfaf</div><div style="flex:1"><div style="font-weight:600;font-size:15px;margin-bottom:4px">OncoKB \u2014 MSK Precision Oncology</div><div style="font-size:13px;color:var(--t2);line-height:1.5">Look up TP53 R175H at Memorial Sloan Kettering\u2019s OncoKB. What is the oncogenic classification? Are there any FDA-approved therapies targeting this mutation?</div><div style="font-size:12px;color:var(--info);margin-top:6px">oncokb.org \u2192 (free, no login for basic info)</div></div></div></div>'
+
++'<div class="g2" style="margin-top:12px">'
++'<div class="card db-card" onclick="window.open(\'https://molstar.org/viewer/?pdb=2xwr\',\'_blank\')"><div style="display:flex;align-items:flex-start;gap:12px"><div style="width:40px;height:40px;border-radius:var(--r);background:var(--bg2);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0">\ud83e\uddf6</div><div style="flex:1"><div style="font-weight:600;font-size:14px;margin-bottom:4px">Mol* 3D \u2014 TP53</div><div style="font-size:12px;color:var(--t2);line-height:1.5">PDB: 2XWR. Find residue 175. Why is R175H so damaging to DNA binding?</div><div style="font-size:11px;color:var(--info);margin-top:4px">molstar.org \u2192</div></div></div></div>'
++'<div class="card db-card" onclick="window.open(\'https://molstar.org/viewer/?pdb=4p7e\',\'_blank\')"><div style="display:flex;align-items:flex-start;gap:12px"><div style="width:40px;height:40px;border-radius:var(--r);background:var(--bg2);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0">\ud83e\uddf6</div><div style="flex:1"><div style="font-weight:600;font-size:14px;margin-bottom:4px">Mol* 3D \u2014 JAK2</div><div style="font-size:12px;color:var(--t2);line-height:1.5">PDB: 4P7E. Find residue 617. Where is V617F in the pseudokinase-kinase interface?</div><div style="font-size:11px;color:var(--info);margin-top:4px">molstar.org \u2192</div></div></div></div>'
++'</div>'
+
++'<div class="card ac-teal" style="margin-top:16px"><div style="font-weight:600;font-size:16px;margin-bottom:12px">VAF interactive explorer</div><div style="font-size:13px;color:var(--t2);margin-bottom:12px">How do tumor purity, copy number, LOH, and subclonality affect the observed VAF? Select a scenario and adjust the sliders.</div><div style="font-size:13px;font-weight:600;margin-bottom:6px">Allelic state presets</div><div class="vaf-scenarios" id="vaf-sc-container"></div><div id="vaf-chr" class="chr-vis"></div><div id="vaf-form" class="vaf-formula"></div><div style="font-size:13px;font-weight:600;margin-bottom:6px">Parameters</div><div class="slider-group"><label>Tumor purity (%)</label><input type="range" min="5" max="100" value="80" step="1" id="vaf-pur" oninput="vafUpdate()" style="flex:1"><span class="val" id="vaf-pur-v">80%</span></div><div class="slider-group"><label>Clone fraction (CCF)</label><input type="range" min="5" max="100" value="100" step="1" id="vaf-ccf" oninput="vafUpdate()" style="flex:1"><span class="val" id="vaf-ccf-v">100%</span></div><div class="slider-group"><label>Total copies (tumor)</label><input type="range" min="0" max="6" value="2" step="1" id="vaf-ct" oninput="vafUpdate()" style="flex:1"><span class="val" id="vaf-ct-v">2</span></div><div class="slider-group"><label>Mutant copies</label><input type="range" min="0" max="6" value="1" step="1" id="vaf-m" oninput="vafUpdate()" style="flex:1"><span class="val" id="vaf-m-v">1</span></div><div id="vaf-res" class="vaf-results"></div><div class="vaf-rev"><div class="vrt">Reverse calculator: observed VAF \u2192 clone fraction</div><div class="slider-group"><label>Observed VAF (%)</label><input type="range" min="0.5" max="60" value="4.1" step="0.1" id="vaf-obs" oninput="vafReverse()" style="flex:1"><span class="val" id="vaf-obs-v">4.1%</span></div><div id="vaf-rev-res" class="vaf-results" style="margin-bottom:0"></div><div class="vaf-note" id="vaf-rev-note"></div></div><div style="font-size:13px;font-weight:600;margin-bottom:6px;margin-top:12px">Load case mutations</div><div class="case-btns" id="vaf-case-btns"></div></div>';
+}
+
+function sec7(){
+return '<h2>P53 Immunohistochemistry</h2><div class="sub">Correlating NGS with IHC</div>'
++img('p53_ihc.jpg','P53 IHC \u2014 bone marrow biopsy')
+
++'<div class="card"><div style="font-weight:600;font-size:15px;margin-bottom:12px">TP53 Mutations and IHC Patterns</div>'
++'<div class="ihc-card"><div class="hd"><span class="var">c.524G&gt;A (p.R175H)</span><span style="font-size:12px;color:var(--warn)">VAF 2.2%</span></div><div style="font-size:13px">\ud83d\udfe4\ud83d\udfe4\ud83d\udfe4 <strong>Strong overexpression</strong></div><div style="font-size:12px;color:var(--t3);margin-top:2px">Missense \u2192 stabilized non-functional protein accumulates</div></div>'
++'<div class="ihc-card"><div class="hd"><span class="var">c.395A&gt;T (p.K132M)</span><span style="font-size:12px;color:var(--warn)">VAF 3.4%</span></div><div style="font-size:13px">\ud83d\udfe4\ud83d\udfe4\ud83d\udfe4 <strong>Strong overexpression</strong></div><div style="font-size:12px;color:var(--t3);margin-top:2px">Missense \u2192 stabilized non-functional protein accumulates</div></div>'
++'<div class="ihc-card"><div class="hd"><span class="var">c.673-2A&gt;G (p.? splice)</span><span style="font-size:12px;color:var(--warn)">VAF 4.1%</span></div><div style="font-size:13px">\u2b1c\u2b1c\u2b1c <strong>Complete absence (null)</strong></div><div style="font-size:12px;color:var(--t3);margin-top:2px">Splice site \u2192 no protein produced \u2192 loss of staining</div></div>'
++'</div>'
+
++prompt("With 3 TP53 mutations at low VAFs, is this multi-hit TP53? What is the allelic state?")
+
++'<div class="card"><div style="font-weight:600;font-size:15px;margin-bottom:12px">Clinical vs Lab Prompts</div><div class="g2"><div><div style="font-weight:600;margin-bottom:6px;color:var(--info)">Clinical</div><div style="line-height:1.8;color:var(--t2);font-size:14px">MPN?<br>MDS?<br>MDS/MPN?</div></div><div><div style="font-weight:600;margin-bottom:6px;color:var(--warn)">Molecular / Lab</div><div style="line-height:1.8;color:var(--t2);font-size:14px">Are we sure there is no driver mutation?<br>Anything else to order?</div></div></div></div>'
+
++menti(2,"What is your working diagnosis? MPN vs MDS vs MDS/MPN?")
++menti(3,"Treatment approach: Azacitidine? Refer to transplant?")
++menti(4,"Any missing tests? Should we order higher-sensitivity MPN driver testing?");
+}
+
+function sec8(){
+return '<h2>Higher Sensitivity MPN Driver Testing (AS-PCR)</h2><div class="sub">Sunnybrook allele-specific PCR results</div>'
+
++img('aspcr.jpg','AS-PCR report \u2014 JAK2 V617F and CALR exon 9')
+
++'<div class="card"><div style="font-weight:600;font-size:15px;margin-bottom:12px">Results Summary</div><div class="g2"><div class="finding"><div class="lb">JAK2 p.V617F</div><div class="vl" style="font-weight:600">Not detected</div><div style="font-size:11px;color:var(--t3);margin-top:2px">LOD: 0.5-1%</div></div><div class="finding"><div class="lb">CALR exon 9</div><div class="vl" style="font-weight:600">Not detected</div><div style="font-size:11px;color:var(--t3);margin-top:2px">LOD: 1-2%</div></div></div><div style="font-size:13px;color:var(--t2);margin-top:12px;line-height:1.7"><p style="margin-bottom:8px"><strong>Interpretation:</strong> JAK2 V617F and CALR exon 9 frameshift mutations are frequently found in BCR/ABL1-negative MPNs; however, absence does not definitively exclude an MPN.</p><p><strong>Important:</strong> Rarely, genetic changes at primer binding sites may result in false-negative results.</p></div></div>'
+
++'<div style="height:24px"></div>'
+
++'<h2>Consensus Diagnosis</h2><div class="sub">Based on all available data</div>'
++img('consensus2.png','Diagnostic summary')
++'<div class="card ac-info" style="text-align:center;padding:2rem"><span class="badge badge-info">Consensus</span><div style="font-size:28px;font-weight:600;margin:16px 0 8px">MDS with Fibrosis (MDS-F)</div><div style="font-size:14px;color:var(--t2)">Hypercellular marrow \u00b7 megakaryocyte atypia \u00b7 reticulin fibrosis<br>Multi-hit TP53 \u00b7 JAK2/CALR negative (AS-PCR)</div></div>'
+
++prompt("Do you agree with this diagnosis?")
++prompt("What is the expected prognosis with multi-hit TP53 in MDS?")
++'<div style="padding:20px;background:var(--bg2);border-radius:var(--rl);text-align:center;font-size:16px;color:var(--t2);font-style:italic;margin-top:8px">But wait\u2026 there\u2019s more \u2026</div>';
+}
+
+function sec9(){
+if(!S.revealJAK2){
+return '<h2>The Plot Twist</h2><div class="sub">You don\u2019t know JAK\u2026</div><div class="card" style="text-align:center;padding:3rem"><div style="font-size:18px;font-weight:600;margin-bottom:20px">Additional testing was performed at UHN\u2026</div><button class="btn-reveal" onclick="revealJAK2()">Reveal JAK2 Results</button></div>';
+}
+return '<h2>You Don\u2019t Know JAK\u2026</h2><div class="sub">Serial JAK2 testing at UHN</div>'
+
++'<div class="card ac-danger"><div style="font-weight:600;font-size:15px;margin-bottom:16px;color:var(--danger)">JAK2 V617F \u2014 Serial Testing</div>'
++img('jak2_testing.png','JAK2 testing timeline')
++'<div class="timeline">'
++'<div class="tp"><div class="dot empty"></div><div><div style="display:flex;align-items:baseline;gap:8px;flex-wrap:wrap"><strong>Diagnosis (Sunnybrook)</strong><span style="font-size:12px;color:var(--t3)">AS-PCR</span></div><div style="font-size:13px;color:var(--t2);margin-top:2px">Not detected</div><div style="font-size:12px;color:var(--t3)">Sensitivity: 0.5-1%</div></div></div>'
++'<div class="tp"><div class="dot warn"></div><div><div style="display:flex;align-items:baseline;gap:8px;flex-wrap:wrap"><strong>Jan (UHN)</strong><span style="font-size:12px;color:var(--t3)">UHN NGS</span></div><div style="font-size:13px;color:var(--warn);font-weight:600;margin-top:2px">Low level detected <span style="font-weight:400;color:var(--t2)">\u2014 VAF ~1%</span></div><div style="font-size:12px;color:var(--t3)">Sensitivity: &lt;0.1%</div></div></div>'
++'<div class="tp"><div class="dot warn"></div><div><div style="display:flex;align-items:baseline;gap:8px;flex-wrap:wrap"><strong>Aug (UHN)</strong><span style="font-size:12px;color:var(--t3)">UHN NGS</span></div><div style="font-size:13px;color:var(--warn);font-weight:600;margin-top:2px">Low level detected <span style="font-weight:400;color:var(--t2)">\u2014 VAF ~1%</span></div><div style="font-size:12px;color:var(--t3)">Sensitivity: &lt;0.1%</div></div></div>'
++'<div class="tp"><div class="dot warn"></div><div><div style="display:flex;align-items:baseline;gap:8px;flex-wrap:wrap"><strong>Nov (UHN)</strong><span style="font-size:12px;color:var(--t3)">UHN NGS</span></div><div style="font-size:13px;color:var(--danger);font-weight:600;margin-top:2px">Detected <span style="font-weight:400;color:var(--t2)">\u2014 VAF ~9%</span></div><div style="font-size:12px;color:var(--t3)">Sensitivity: &lt;0.1%</div></div></div>'
++'</div></div>'
+
++'<div class="g2">'
++img('normal_bm.jpg','"Normal" bone marrow for comparison')
++'<div></div></div>'
+
++'<div class="card ac-warn"><div style="font-weight:600;font-size:15px;margin-bottom:8px">Why Was It Missed?</div><div style="font-size:13px;line-height:1.7;color:var(--t2)"><p style="margin-bottom:8px">The initial Sunnybrook AS-PCR has a limit of detection of 0.5-1%. The JAK2 V617F was present below this threshold at diagnosis.</p><p style="margin-bottom:8px">UHN\u2019s NGS-based assay has much higher sensitivity (&lt;0.1%), detecting the low-level clone.</p><p style="font-weight:600;color:var(--t)">Assay sensitivity determines diagnosis. The biology didn\u2019t change \u2014 our ability to detect it did.</p></div></div>'
+
++prompt("Does this change the diagnosis? Is this still MDS-F, or MPN with fibrosis, or MDS/MPN?")
++prompt("At what VAF does JAK2 V617F become clinically meaningful?");
+}
+
+function sec10(){
+var v=S.spectrumVAF;
+var pos=Math.min(95,Math.max(5,v*3));
+
+return '<h2>When is JAK2 V617F CH(IP) vs MPN?</h2><div class="sub">Is JAK2 a different kind of CH(IP)? Is this dependent on VAF?</div>'
++img('ch_spectrum.png','JAK2 V617F clonal hematopoiesis and cardiovascular disease (J Cardiology 2023)')
++'<div class="g2">'+img('ch_diagram1.png','CH progression model')+img('ch_diagram2.png','CH to MPN spectrum')+'</div>'
+
++'<div style="margin-top:16px;font-size:13px;color:var(--t2);margin-bottom:12px">Drag the slider to explore the CH \u2192 MPN continuum:</div>'
++'<div class="slider-group"><label>JAK2 V617F VAF</label><input type="range" min="0.5" max="50" step="0.5" value="'+v+'" oninput="updateSV(this.value)"><span class="val" id="sv">'+v+'%</span></div>'
++'<div class="spectrum-bar"><div class="zone" style="background:#0f6e56;border-right:2px solid var(--bg)">CHIP</div><div class="zone" style="background:#D85A30;border-right:2px solid var(--bg)">CCUS</div><div class="zone" style="background:#993556;border-right:2px solid var(--bg)">MPN-NOS/U</div><div class="zone" style="background:#534ab7">Defined MPN</div><div class="marker" id="sm" style="left:'+pos+'%"></div></div>'
++'<div style="display:flex;justify-content:space-between;font-size:11px;color:var(--t3);margin-bottom:16px"><span>Incidental finding</span><span>Increasing clinical significance \u2192</span></div>'
+
++'<h2 style="margin-top:24px">MPN-NOS (WHO) vs MPN-U (ICC)</h2><div class="sub">Key classification differences</div>'
++'<div class="g2"><div><span class="badge badge-info">WHO 5th edition</span><div style="font-size:13px;font-weight:600;margin:8px 0 6px">MPN, not otherwise specified</div><div class="cr-row"><div class="tl">Clinical or morphologic features</div><div class="dt">Clinical^ AND hematological features OR morphologic features present</div><div class="nt">^Splenomegaly, atypical thrombosis, leukocytosis</div></div><div class="cr-row"><div class="tl">Clonal marker</div><div class="dt">JAK2, CALR, or MPL mutation or other clonal marker</div></div><div class="cr-row"><div class="tl">Exclusion</div><div class="dt">Criteria for defined MPN, MDS, MDS/MPN, CML not met</div></div><div class="cr-row"><div class="tl">All 3 criteria required</div></div></div>'
++'<div><span class="badge badge-warn">2022 ICC</span><div style="font-size:13px;font-weight:600;margin:8px 0 6px">MPN, unclassifiable</div><div class="cr-row"><div class="tl">Clinical MPN features</div><div class="dt">Clinical AND hematological features present</div><div class="nt">Stricter \u2014 requires clinical features</div></div><div class="cr-row"><div class="tl">Clonal marker</div><div class="dt">JAK2, CALR, or MPL mutation or other clonal marker</div><div class="nt">Recommended sensitivity: JAK2 &lt;1%; CALR/MPL 1-3%</div></div><div class="cr-row"><div class="tl">Exclusion</div><div class="dt">Criteria for defined MPN, MDS, MDS/MPN, CML not met</div></div><div class="cr-row"><div class="tl">All 3 criteria required</div></div></div></div>'
++'<div style="font-size:12px;color:var(--t3);margin-top:12px;line-height:1.5">Key difference: ICC specifies recommended assay sensitivities, while WHO does not mandate a threshold.</div>'
+
++'<h2 style="margin-top:24px">PB VAF \u2260 Clonal Burden</h2><div class="sub">Peripheral blood JAK2 V617F does not assess the RBC/platelet clonal burden</div>'
++'<div class="g2">'+img('pb_vaf1.png','Blood 2020; 136(22):2591-2595')+img('pb_vaf2.png','Cell Stem Cell 2021; 28(3):514-523')+'</div>'
+
++'<div class="card" style="margin-top:12px"><div style="font-weight:600;font-size:15px;margin-bottom:8px">Key Teaching Points</div><div style="font-size:13px;line-height:1.8;color:var(--t2)">'
++'<div style="display:flex;gap:8px;margin-bottom:4px"><span style="color:var(--teal);font-weight:600;flex-shrink:0">1.</span><span>Assay sensitivity matters \u2014 the same patient can get different diagnoses depending on the test used.</span></div>'
++'<div style="display:flex;gap:8px;margin-bottom:4px"><span style="color:var(--teal);font-weight:600;flex-shrink:0">2.</span><span>Multi-hit TP53 is a critical prognostic marker regardless of MDS vs MPN classification.</span></div>'
++'<div style="display:flex;gap:8px;margin-bottom:4px"><span style="color:var(--teal);font-weight:600;flex-shrink:0">3.</span><span>JAK2 V617F at low VAF occupies a gray zone between CHIP and MPN \u2014 context is everything.</span></div>'
++'<div style="display:flex;gap:8px;margin-bottom:4px"><span style="color:var(--teal);font-weight:600;flex-shrink:0">4.</span><span>WHO and ICC differ on MPN-NOS/U classification; ICC specifies sensitivity thresholds.</span></div>'
++'<div style="display:flex;gap:8px;margin-bottom:4px"><span style="color:var(--teal);font-weight:600;flex-shrink:0">5.</span><span>Peripheral blood VAF does not directly reflect clonal burden in individual lineages.</span></div>'
++'<div style="display:flex;gap:8px"><span style="color:var(--teal);font-weight:600;flex-shrink:0">6.</span><span>ClinVar, VarSome, OncoKB, IARC TP53 Database, and cBioPortal are clinical tools, not just research resources.</span></div>'
++'</div></div>';
+}
+
+render();
+</script>
+</body>
+</html>
