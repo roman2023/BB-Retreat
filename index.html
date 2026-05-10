@@ -105,9 +105,39 @@ img.case-img:active{transform:scale(1.5);z-index:10;position:relative}
   h2{font-size:18px}
 }
 .vaf-scenarios{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:6px;margin-bottom:12px}
+/* 1. Accommodate the 9th "Custom" button (use 1fr for 3 columns) */
+.vaf-scenarios {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr; /* Force 3 columns so 9 fit neatly */
+    gap: 6px;
+    margin-bottom: 12px;
+}
+
+/* 2. Enlarge the cell diagram */
+.chr-vis {
+    display: flex;
+    gap: 30px; /* Increase gap between cell types */
+    justify-content: center;
+    margin: 24px 0; /* Increase top/bottom margin */
+    transform: scale(1.3); /* Scale up the whole diagram by 30% */
+}
+
+/* 3. Style the slider labels (add IDs to your HTML for these) */
+#label-vaf-ct, #label-vaf-m {
+    font-size: 13px;
+    color: var(--t2);
+    min-width: 160px; /* Increase width for the padlock icon */
+    display: flex;
+    align-items: center;
+    gap: 4px; /* Space between lock and text */
+}
 .vaf-sc{padding:8px;border:1px solid var(--bd);border-radius:var(--r);cursor:pointer;font-size:12px;line-height:1.4;background:var(--bg);transition:all .15s}
 .vaf-sc:hover{border-color:var(--bd2);background:var(--bg2)}
-.vaf-sc.active{border:2px solid var(--info);background:var(--infobg)}
+.vaf-sc.active {
+    border: 2px solid var(--info);
+    background: var(--infobg);
+    box-shadow: 0 0 8px rgba(21, 112, 184, 0.3); /* Adds a nice subtle glow */
+}
 .vaf-sc .sn{font-weight:600;font-size:12px;margin-bottom:1px}
 .vaf-sc .sd{color:var(--t2);font-size:11px}
 .vaf-formula{background:var(--bg2);border-radius:var(--rl);padding:12px 16px;margin-bottom:12px;font-family:var(--fm);font-size:13px;line-height:2}
@@ -151,6 +181,15 @@ img.case-img:active{transform:scale(1.5);z-index:10;position:relative}
 .fish-table th{text-align:left;padding:6px 10px;background:var(--bg2);border:1px solid var(--bd);font-weight:600}
 .fish-table td{padding:6px 10px;border:1px solid var(--bd)}
 .fish-table .neg{color:var(--teal);font-weight:600}
+/* Using both classes makes the rule "stronger" */
+/* We use the tag + both classes to achieve maximum priority */
+img.case-img.compact {
+  display: block !important;
+  width: 320px !important;    /* Hard-set width */
+  max-width: 100% !important; /* Ensures it doesn't overflow on tiny phones */
+  height: auto !important;
+  margin: 16px auto !important;
+}
 </style>
 </head>
 <body>
@@ -174,18 +213,26 @@ function revealEl(id){
   if(el){el.classList.add('shown');var btn=el.previousElementSibling;if(btn&&btn.classList.contains('reveal-btn'))btn.style.display='none';}
 }
 
+function img(name, caption, isCompact = false){
+  const cls = isCompact ? 'case-img compact' : 'case-img';
+  const style = isCompact ? 'style="width: 320px !important; height: auto !important; margin: 0 auto; display: block;"' : '';
+  
+  return '<img class="'+cls+'" '+style+' src="images/'+name+'" alt="'+caption+'" onclick="showLB(this.src)" loading="lazy"><div class="img-caption">'+caption+' <span style="font-size:11px;color:var(--info)">(tap to zoom)</span></div>';
+}
+
 const STAGES=[
-{id:"s1",label:"Clinical",icon:"\u2460"},
-{id:"s2",label:"Blood smear",icon:"\u2461"},
+{id:"s1",label:"Session plan",icon:"\u2460"},
+{id:"s2",label:"Clinical",icon:"\u2461"},
 {id:"s3",label:"Bone marrow",icon:"\u2462"},
 {id:"s4",label:"Dry tap",icon:"\u2463"},
-{id:"s5",label:"Additional workup",icon:"\u2464"},
+{id:"s5",label:"Interim diagnosis",icon:"\u2464"},
 {id:"s6",label:"Genomic investigations",icon:"\u2465"},
-{id:"s7",label:"Database tasks",icon:"\u2466"},
-{id:"s8",label:"P53 IHC",icon:"\u2467"},
-{id:"s9",label:"OGM + Consensus",icon:"\u2468"},
-{id:"s10",label:"Bonus: JAK2",icon:"\u2469"},
-{id:"s11",label:"CH vs MPN",icon:"\u246a"}
+{id:"s7",label:"Database hands-on",icon:"\u2466"},
+{id:"s8",label:"What the VAF?",icon:"\u2467"},
+{id:"s9",label:"Putting it all together",icon:"\u2468"},
+{id:"s10",label:"OGM + Consensus",icon:"\u2469"},
+{id:"s11",label:"Bonus: JAK2",icon:"\u246a"},
+{id:"s12",label:"CH vs MPN",icon:"\u246b"}
 ];
 
 let S={stage:0,spectrumVAF:2};
@@ -199,16 +246,24 @@ return '<button class="'+cls+'" onclick="go('+i+')">'+st.icon+' '+st.label+'</bu
 
 let c='';
 switch(s.id){
-case 's1':c=sec1();break;case 's2':c=sec2();break;case 's3':c=sec3();break;
-case 's4':c=sec4();break;case 's5':c=sec5();break;case 's6':c=sec6();break;
-case 's7':c=sec7();break;case 's8':c=sec8();break;case 's9':c=sec9();break;
-case 's10':c=sec10();break;case 's11':c=sec11();break;
+  case 's1': c=sec1(); break;
+  case 's2': c=sec2(); break;
+  case 's3': c=sec3(); break;
+  case 's4': c=sec4(); break;
+  case 's5': c=sec5(); break;
+  case 's6': c=sec6(); break;
+  case 's7': c=sec7(); break;
+  case 's8': c=sec8(); break;
+  case 's9': c=sec9(); break;
+  case 's10': c=sec10(); break; // Added missing s10
+  case 's11': c=sec11(); break; // Added missing s11
+  case 's12': c=sec12(); break;
 }
 
 let f='<div class="footer"><button class="btn btn-o" '+(S.stage===0?'disabled':'')+' onclick="prev()">\u2190 Previous</button><span class="ctr">'+(S.stage+1)+' / '+STAGES.length+'</span><button class="btn btn-p" '+(S.stage===STAGES.length-1?'disabled':'')+' onclick="next()">'+(S.stage===STAGES.length-1?'End':'Next \u2192')+'</button></div>';
 
 document.getElementById('app').innerHTML='<div class="nav">'+nav+'</div><div class="content">'+c+'</div>'+f;
-if(s.id==='s7'){initVafExplorer();}
+if(s.id==='s8'){initVafExplorer();}
 }
 
 function initVafExplorer(){
@@ -246,7 +301,8 @@ var VAF_SCENARIOS=[
 {name:'Gain of wild-type',desc:'Trisomy, 1 mut + 2 WT',ct:3,m:1,chr:['wt','wt','mut']},
 {name:'Homozygous deletion',desc:'Both alleles lost',ct:0,m:0,chr:['del','del']},
 {name:'Tetraploid het',desc:'4 copies, 1 mutant',ct:4,m:1,chr:['wt','wt','wt','mut']},
-{name:'Biallelic (2 hits)',desc:'Two different mutations',ct:2,m:2,chr:['mut','dup']}
+{name:'Biallelic (2 hits)',desc:'Two different mutations',ct:2,m:2,chr:['mut','dup']},
+{name:'Custom', desc:'Manually adjust copy numbers', ct:2, m:1, chr:['wt','mut']}
 ];
 var VAF_CASES=[
 {label:'TP53 splice c.673-2A>G',vaf:4.1,pur:80},
@@ -268,15 +324,54 @@ if(m===0)return null;
 var den=(p/100)*ct+(1-p/100)*2;
 return Math.min(((obsVaf/100)*den)/((p/100)*m)*100,999);
 }
-function vafSelectSc(i){
-vafSc=i;
-var s=VAF_SCENARIOS[i];
-document.getElementById('vaf-ct').value=s.ct;
-document.getElementById('vaf-m').value=s.m;
-document.getElementById('vaf-m').max=Math.max(s.ct,0);
-document.querySelectorAll('.vaf-sc').forEach(function(el,j){el.className='vaf-sc'+(j===i?' active':'')});
-vafUpdate();
-}
+function vafSelectSc(i) {
+  vafSc = i;
+  const s = VAF_SCENARIOS[i];
+  
+  const ctInput = document.getElementById('vaf-ct');
+  const mInput = document.getElementById('vaf-m');
+  const ctLabelEl = document.getElementById('label-vaf-ct');
+  const mLabelEl = document.getElementById('label-vaf-m');
+  
+  // 1. Set the values based on the selected preset
+  ctInput.value = s.ct;
+  mInput.value = s.m;
+  mInput.max = Math.max(s.ct, 0);
+
+  const ctLabelText = 'Copies at locus (tumor)';
+  const mLabelText = 'Copies with mutation';
+
+  // 2. Lock/Unlock Logic with Padlocks
+  const isCustom = (s.name === 'Custom');
+  
+  ctInput.disabled = !isCustom;
+  mInput.disabled = !isCustom;
+  
+  // Adjust visuals for disabled state
+  const opacity = isCustom ? "1" : "0.5";
+  const lockIcon = isCustom ? "🔓" : "🔒";
+  
+  ctInput.style.opacity = opacity;
+  mInput.style.opacity = opacity;
+
+  // Update labels if the elements exist
+  if (ctLabelEl) ctLabelEl.innerHTML = `${lockIcon} ${ctLabelText}`;
+  if (mLabelEl) mLabelEl.innerHTML = `${lockIcon} ${mLabelText}`;
+
+  // 3. Handle 'active' class highlight properly
+  document.querySelectorAll('.vaf-sc').forEach((btn, index) => {
+    if (index === i) {
+      btn.classList.add('active');
+    } else {
+      btn.classList.remove('active');
+    }
+  });
+  
+  // 4. Trigger the math update to refresh the formula and diagram
+  vafUpdate();
+};
+  
+
 function vafLoadCase(i){
 var c=VAF_CASES[i];
 document.getElementById('vaf-pur').value=c.pur;
@@ -326,12 +421,8 @@ document.getElementById('vaf-rev-note').textContent=note;
 }
 
 
-function img(name,caption){
-return '<img class="case-img" src="images/'+name+'" alt="'+caption+'" onclick="showLB(this.src)" loading="lazy"><div class="img-caption">'+caption+' <span style="font-size:11px;color:var(--info)">(tap to zoom)</span></div>';
-}
-
 function menti(pollNum,question){
-return '<div class="menti-card"><h3>\u2705 Time to Vote \u2014 Poll #'+pollNum+'</h3><div class="desc" style="margin-bottom:12px">'+question+'</div><a href="https://www.menti.com/alxg4a5s3db4" target="_blank" style="display:inline-block;padding:12px 32px;background:#fff;color:#5d3fd3;font-weight:700;font-size:16px;border-radius:8px;text-decoration:none;margin:8px 0">Tap here to vote</a><div style="font-size:13px;opacity:.75;margin-top:8px">Or go to <strong>menti.com</strong> \u2192 code <strong>2507 4415</strong></div></div>';
+return '<div class="menti-card"><h3>\u2705 Time to Vote \u2014 Poll #'+pollNum+'</h3><div class="desc" style="margin-bottom:12px">'+question+'</div><a href="https://www.menti.com/alfeo2i56nv9" target="_blank" style="display:inline-block;padding:12px 32px;background:#fff;color:#5d3fd3;font-weight:700;font-size:16px;border-radius:8px;text-decoration:none;margin:8px 0">Tap here to vote</a><div style="font-size:13px;opacity:.75;margin-top:8px">Or go to <strong>menti.com</strong> \u2192 code <strong>5213 4110</strong></div></div>';
 }
 
 function prompt(q,time){
@@ -341,31 +432,56 @@ return '<div class="prompt"><div class="q">'+q+'</div>'+(time?'<div class="time"
 // ===== SECTIONS =====
 
 function sec1(){
+return '<div style="text-align:center;padding:1rem 0 2rem">'
++'<h1 style="font-size:28px;font-weight:700;margin-bottom:8px;background:linear-gradient(135deg,var(--info),var(--teal));-webkit-background-clip:text;-webkit-text-fill-color:transparent;">Welcome</h1>'
++'<p style="font-size:15px;color:var(--t2)">Case 2: Integrating Genomics for Myeloid Malignancy: Hands-on session</p></div>'
+
++'<h2>How this session would work</h2>'
++'<div class="card ac-info"><div style="font-size:14px;line-height:1.8;color:var(--t2)">'
++'<p style="margin-bottom:12px">We will move through a clinical case in real-time, layering data as it would arrive in clinical practice.</p>'
++'<div style="display:flex;gap:12px;margin-bottom:10px"><span style="font-size:20px">\ud83d\udcf1</span><span><strong>Interactive Voting:</strong> Use the Menti links to submit your differentials and diagnoses. results will be shown on the main screen.</span></div>'
++'<div style="display:flex;gap:12px;margin-bottom:10px"><span style="font-size:20px">\ud83d\udd2c</span><span><strong>Database Hands-on:</strong> When we reach the genomic data, you will use your own device to query ClinVar, VarSome, and OncoKB.</span></div>'
++'<div style="display:flex;gap:12px"><span style="font-size:20px">\ud83d\udcca</span><span><strong>VAF Explorer:</strong> We will use a custom simulator to "reverse engineer" clonal architecture based on your lab results.</span></div>'
++'</div></div>'
+
++'<h2>The Roadmap</h2>'
++'<div class="timeline">'
++'<div class="tp"><div class="dot" style="background:var(--info)"></div><div><strong>Part 1: The Clinical Hook</strong><div style="font-size:12px;color:var(--t3)">Morphology, CBC trends, and the "Dry Tap" dilemma.</div></div></div>'
++'<div class="tp"><div class="dot" style="background:var(--teal)"></div><div><strong>Part 2: The Genomic Deep-Dive</strong><div style="font-size:12px;color:var(--t3)">Variant interpretation and the math of VAF/clonality.</div></div></div>'
++'<div class="tp"><div class="dot" style="background:var(--purple)"></div><div><strong>Part 3: Consensus & Teaching Points</strong><div style="font-size:12px;color:var(--t3)">Integrating OGM, IHC, and high-sensitivity testing for a final diagnosis.</div></div></div>'
++'</div>'
+
++'<div class="card flag" style="background:var(--infobg);border:none;text-align:center">'
++'<p style="font-weight:600;font-size:14px;color:var(--info)">\ud83d\udca1 Pro Tip: You can tap any image in this app to zoom in on the morphology.</p>'
++'</div>';
+}
+
+function sec2(){
 return '<div style="text-align:center;padding:1.5rem 0"><div style="font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--t3);margin-bottom:6px">Bill Brien Retreat \u00b7 May 11, 2026</div><h1 style="font-size:26px;font-weight:600;margin-bottom:6px">Case 1: Malignant Hematology</h1><p style="font-size:14px;color:var(--t2)">An interactive NGS case</p></div>'
 
 +'<h2>Clinical Presentation</h2><div class="sub">Read the vignette, then discuss at your table</div>'
 
-+'<div class="card" style="font-size:15px;line-height:1.8"><p style="margin-bottom:12px"><strong>60-year-old female</strong> with no relevant past medical history</p><p style="margin-bottom:12px">Presenting with <strong>abrupt onset weakness</strong></p><p style="margin-bottom:12px">Found to have <strong style="color:var(--danger)">pancytopenia</strong></p><p style="margin-bottom:12px">No constitutional symptoms</p><p>No splenomegaly (recent ultrasound, spleen 11 cm)</p></div>'
++'<div class="card" style="font-size:15px;line-height:1.2"><p style="margin-bottom:12px"><strong>60-year-old female</strong> with no relevant past medical history</p><p style="margin-bottom:12px">Presenting with <strong>abrupt onset weakness</strong></p><p style="margin-bottom:12px">Found to have <strong style="color:var(--danger)">pancytopenia</strong></p><p style="margin-bottom:12px">No constitutional symptoms</p><p>No splenomegaly (recent ultrasound, spleen 11 cm)</p></div>'
 
 +'<h2 style="margin-top:20px">CBCs</h2>'
-+img('cbc_table.png','CBC values: August 2025 vs February 2026')
++img('cbc.png','CBC values: August 2025 vs February 2026')
 
 +'<div class="cbc-grid"><div class="hdr"></div><div class="hdr" style="text-align:center">Aug 2025</div><div class="hdr" style="text-align:center">Feb 2026</div><div class="cell"><strong>Hb (g/L)</strong></div><div class="cell" style="text-align:center">139</div><div class="cell danger" style="text-align:center">59</div><div class="cell"><strong>Plt (\u00d710\u2079/L)</strong></div><div class="cell" style="text-align:center">242</div><div class="cell danger" style="text-align:center">39</div><div class="cell"><strong>WBC (\u00d710\u2079/L)</strong></div><div class="cell" style="text-align:center">2.5</div><div class="cell danger" style="text-align:center">1.4</div><div class="cell"><strong>ANC (\u00d710\u2079/L)</strong></div><div class="cell" style="text-align:center">2.5</div><div class="cell danger" style="text-align:center">0.21</div></div>'
 
-+prompt("What is on your differential diagnosis?","Discuss for 2 minutes");
++ img('blood_smear.jpg','Peripheral blood smear')
+
++'<div class="smear-report"><div class="rpt-section">Peripheral Blood Film</div><div class="rpt-section" style="margin-top:12px">CBC</div><div><span class="rpt-label">Hb:</span> 84 g/L</div><div><span class="rpt-label">WBC:</span> 1.4 \u00d7 10e9/L</div><div><span class="rpt-label">Plt:</span> 61 \u00d7 10e9/L</div><div style="height:8px"></div><div><span class="rpt-label">MCV:</span> 101 fL</div><div><span class="rpt-label">RDW:</span> 18.4%</div><div><span class="rpt-label">Neutrophils:</span> 0.21 \u00d7 10e9/L</div><div><span class="rpt-label">Lymphocytes:</span> 0.98 \u00d7 10e9/L</div><div><span class="rpt-label">Monocytes:</span> 0.03 \u00d7 10e9/L</div><div><span class="rpt-label">Myelocytes:</span> 0.03 \u00d7 10e9/L</div><div class="rpt-section" style="margin-top:12px">Morphology</div><div><span class="rpt-label">RBC:</span> Poikilocytosis. Occasional teardrops. Rare nRBC</div><div><span class="rpt-label">WBC:</span> Rare myelocytes. No blasts (0/100 cells counted).</div><div><span class="rpt-label">PLT:</span> Subset hypogranular platelets</div></div>'
+
++prompt("What is on your differential diagnosis?","Discuss for 2 minutes")
+
++menti(1,"What is on your differential diagnosis?");
 }
 
-function sec2(){
-return '<h2>Blood Smear</h2><div class="sub">Peripheral blood film report</div>'
-+img('blood_smear.jpg','Peripheral blood smear')
 
-+'<div class="smear-report"><div class="rpt-section">Peripheral Blood Film</div><div class="rpt-section" style="margin-top:12px">CBC</div><div><span class="rpt-label">Hb:</span> 84 g/L</div><div><span class="rpt-label">WBC:</span> 1.4 \u00d7 10e9/L</div><div><span class="rpt-label">Plt:</span> 61 \u00d7 10e9/L</div><div style="height:8px"></div><div><span class="rpt-label">MCV:</span> 101 fL</div><div><span class="rpt-label">RDW:</span> 18.4%</div><div><span class="rpt-label">Neutrophils:</span> 0.21 \u00d7 10e9/L</div><div><span class="rpt-label">Lymphocytes:</span> 0.98 \u00d7 10e9/L</div><div><span class="rpt-label">Monocytes:</span> 0.03 \u00d7 10e9/L</div><div><span class="rpt-label">Myelocytes:</span> 0.03 \u00d7 10e9/L</div><div class="rpt-section" style="margin-top:12px">Morphology</div><div><span class="rpt-label">RBC:</span> Poikilocytosis. Occasional teardrops. Rare nRBC</div><div><span class="rpt-label">WBC:</span> Rare myelocytes. No blasts (0/100 cells counted).</div><div><span class="rpt-label">PLT:</span> Subset hypogranular platelets</div></div>';
-
-}
 
 function sec3(){
 return '<h2>Bone Marrow Biopsy</h2><div class="sub">A bone marrow biopsy was performed</div>'
-+img('bm_biopsy_overview.jpg','Bone marrow trephine biopsy \u2014 overview')
++img('bm_biopsy_overview.jpg','Bone marrow trephine biopsy \u2014 overview', true)
 
 +'<div class="card"><div style="font-weight:600;font-size:15px;margin-bottom:8px">Cellularity</div><div style="font-size:14px;color:var(--t2)">Hypercellular for age at 80-90% (expected cellularity is ~40% in a 60-year-old female)</div></div>'
 
@@ -376,23 +492,25 @@ return '<h2>Bone Marrow Biopsy</h2><div class="sub">A bone marrow biopsy was per
 
 +img('reticulin.jpg','Reticulin stain \u2014 WHO MF2/3')
 
-+'<div class="card ac-teal"><div style="font-weight:600;font-size:15px;margin-bottom:10px">Morphology Checklist</div><div style="font-size:14px;line-height:2;color:var(--t2)">\u25a1 Is this hypercellular for age?<br>\u25a1 Are the megakaryocytes increased?<br>\u25a1 Megakaryocytes, mega-important!<br>\u25a1 Chubby and cuddly?<br>\u25a1 Clustered, mean and scary?<br>\u25a1 I don\u2019t know\u2026<br>\u25a1 Are there increased blasts?<br>\u25a1 I need cytogenetics / molecular!<br>\u25a1 Convinced MPN?</div></div>'
++'<div class="card ac-teal"><div style="font-weight:600;font-size:15px;margin-bottom:10px">Morphology Checklist</div><div style="font-size:14px;line-height:2;color:var(--t2)">\u25a1 Is this hypercellular for age?<br>\u25a1 Are the megakaryocytes increased?<br>\u25a1 Megakaryocytes, mega-important!<br>\u25a1 Chubby and cuddly?<br>\u25a1 Clustered, mean and scary?<br>\u25a1 I don\u2019t know\u2026<br>\u25a1 Are there increased blasts?<br></div></div>'
 
-+menti(1,"What is your initial morphologic impression?<br>MPN? MDS? MDS/MPN? Need more info?");
++menti(2,"What is your initial morphologic impression?<br>MPN? MDS? MDS/MPN? Need more info?");
 }
 
 function sec4(){
 return '<h2>Dry Tap</h2><div class="sub">The aspirate was unsuccessful</div>'
-+img('dry_tap.jpg','Dry tap \u2014 bone marrow aspirate')
++img('dry_tap.jpg','Dry tap \u2014 bone marrow aspirate', true)
 +'<div class="card ac-danger"><div style="display:flex;align-items:center;gap:12px"><div style="font-size:28px">\u26a0</div><div><div style="font-weight:600;font-size:15px">Dry tap \u2014 no aspirate obtained</div><div style="font-size:13px;color:var(--t2);margin-top:4px">What happens to your genomic workup?</div></div></div></div>'
 
 +prompt("Do you have an automatic/reflex lab protocol for managing dry taps or poor aspirates?","Discuss for 3 minutes")
+
++menti(3,"Do you know if your lab has a protocol for managing dry taps or suboptimal aspirates?")
 
 +'<div class="collapsible"><div class="collapsible-header" onclick="toggleCollapsible(this)">Recommendations <span class="arrow">\u25b6</span></div><div class="collapsible-body"><div style="font-size:14px;line-height:1.7;color:var(--t2)"><p style="margin-bottom:8px">Obtain a second bone marrow biopsy as some labs may:</p><div class="g2"><div class="finding"><div class="lb">Disaggregate for flow cytometry</div><div class="vl">Core biopsy material can be processed</div></div><div class="finding"><div class="lb">Process for molecular salvage</div><div class="vl">Validation in progress at Sunnybrook</div></div></div></div>'+img('molecular_salvage.jpg','Molecular salvage workflow: core biopsy vs aspirate for genomic information')+'</div></div>';
 }
 
 function sec5(){
-return '<h2>Additional Workup</h2><div class="sub">IHC and cytologic assessment</div>'
+return '<h2>Interim diagnosis</h2><div class="sub">IHC and cytologic assessment</div>'
 
 +'<h2 style="margin-top:8px">CD34 IHC</h2>'
 +img('cd34.jpg','CD34 immunohistochemistry')
@@ -402,7 +520,7 @@ return '<h2>Additional Workup</h2><div class="sub">IHC and cytologic assessment<
 +img('touch_imprints.jpg','Touch imprints from core biopsy')
 +'<div class="card"><div style="font-size:14px;color:var(--t2);line-height:1.7">Dry tap. Cytologic assessment is limited to touch imprints. In this scenario, confident assessment of dysplasia is challenging to assess on touch imprints alone.</div></div>'
 
-+'<div class="card ac-info"><div style="font-size:14px;line-height:1.7;color:var(--t2)"><strong>Interim summary:</strong> Hypercellular marrow with megakaryocyte hyperplasia and atypia in clusters. Cytologic evaluation is limited given dry tap. No increase in blasts by CD34/CD117 IHC. Blood smear is leukoerythroblastic with subset hypogranular platelets. Fibrosis MF2/3.<br><br>The overall findings suggest primary myelofibrosis or MDS with fibrosis. Genomics pending. A classification addendum will be issued once genomic investigations from peripheral blood are complete.<br><br><em>Megakaryocytes are noted to be CD34 positive but do not have the histologic features of megakaryoblasts.</em></div></div>';
++'<div class="card ac-info"><div style="font-size:14px;line-height:1.7;color:var(--t2)"><strong>Interim Summary:</strong> Hypercellular marrow with megakaryocyte hyperplasia and atypia in clusters. Cytologic evaluation is limited given dry tap. No increase in blasts by CD34/CD117 IHC. Blood smear is leukoerythroblastic with subset hypogranular platelets. Fibrosis MF2/3.<br><br>The overall findings suggest primary myelofibrosis or MDS with fibrosis. Genomics pending. A classification addendum will be issued once genomic investigations from peripheral blood are complete.<br><br><em>Megakaryocytes are noted to be CD34 positive but do not have the histologic features of megakaryoblasts.</em></div></div>';
 }
 
 function sec6(){
@@ -419,17 +537,17 @@ return '<h2>Genomic Investigations</h2><div class="sub">Requested from periphera
 +'<div class="reveal-area" id="ngs-results"><div class="card"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px"><div style="font-weight:600;font-size:15px">Myeloid Biomarker Results \u2014 DNA assay</div><span class="badge badge-danger">3 variants</span></div><div class="mt-table"><div class="mt-hdr"><span>Gene</span><span>Coding</span><span>Protein</span><span></span><span>Tier</span></div><div class="mt-row"><span class="gene">TP53</span><span class="cod">c.673-2A&gt;G</span><span class="prot">p.? (splice)</span><span></span><span class="badge badge-danger">1/2</span></div><div class="mt-row"><span class="gene">TP53</span><span class="cod">c.524G&gt;A</span><span class="prot">p.Arg175His</span><span></span><span class="badge badge-danger">1/2</span></div><div class="mt-row"><span class="gene">TP53</span><span class="cod">c.395A&gt;T</span><span class="prot">p.Lys132Met</span><span></span><span class="badge badge-danger">1/2</span></div></div><div style="font-size:12px;color:var(--t3);margin-top:8px">Note: VAF values hidden \u2014 we will discuss these next</div></div>'
 +'<div class="card"><div style="font-weight:600;font-size:15px;margin-bottom:8px">RNA assay</div><div style="font-size:14px;color:var(--t2)">RNA transcript variants: <strong>NOT IDENTIFIED</strong></div></div>'
 
-+prompt("What do these variants mean? Are you missing any information?")
-
 +'<div class="card ac-warn"><div style="font-weight:600;font-size:15px;margin-bottom:8px">Discussion: Why NGS on both DNA and RNA?</div><div style="font-size:13px;line-height:1.7;color:var(--t2)"><p style="margin-bottom:8px"><strong>DNA panel:</strong> Detects point mutations, small indels, splice site variants. Cannot detect gene fusions without specific breakpoint primers.</p><p><strong>RNA panel:</strong> Detects fusion transcripts (e.g. BCR::ABL1, PML::RARA, KMT2A fusions) regardless of the genomic breakpoint location. Essential for AML/ALL where fusions are diagnostic and therapeutic targets.</p></div></div>'
 
-+'<button class="reveal-btn" onclick="revealEl(\'vaf-reveal\')">But wait\u2026 what\u2019s the VAF?</button>'
-+'<div class="reveal-area" id="vaf-reveal"><div class="card"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px"><div style="font-weight:600;font-size:15px">Now with VAF revealed</div></div><div class="mt-table"><div class="mt-hdr"><span>Gene</span><span>Coding</span><span>Protein</span><span>VAF</span><span>Tier</span></div><div class="mt-row"><span class="gene">TP53</span><span class="cod">c.673-2A&gt;G</span><span class="prot">p.? (splice)</span><span class="vaf">4.1%</span><span class="badge badge-danger">1/2</span></div><div class="mt-row"><span class="gene">TP53</span><span class="cod">c.524G&gt;A</span><span class="prot">p.Arg175His</span><span class="vaf">2.2%</span><span class="badge badge-danger">1/2</span></div><div class="mt-row"><span class="gene">TP53</span><span class="cod">c.395A&gt;T</span><span class="prot">p.Lys132Met</span><span class="vaf">3.4%</span><span class="badge badge-danger">1/2</span></div></div></div>'+prompt("Why is the VAF so low?")+prompt("What is the tumor content in the sample?")+'</div>'
-+'</div>';
++prompt("What do these variants mean? What is tier1/2/3?")
+
+
 }
 
 function sec7(){
 return '<h2>Hands-on: Explore the Mutations</h2><div class="sub">Search these databases on your device \u2014 10 minutes</div>'
+
++prompt("Links below are clickable on your device. Get familiar with these resources!")
 
 +'<div class="card db-card" onclick="window.open(\'https://www.ncbi.nlm.nih.gov/clinvar/?term=TP53+Arg175His\',\'_blank\')"><div style="display:flex;align-items:flex-start;gap:12px"><div style="width:40px;height:40px;border-radius:var(--r);background:var(--bg2);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0">\ud83e\uddec</div><div style="flex:1"><div style="font-weight:600;font-size:15px;margin-bottom:4px">ClinVar \u2014 NCBI</div><div style="font-size:13px;color:var(--t2);line-height:1.5">Search for TP53 p.Arg175His (R175H). What is its clinical significance? Is it a hotspot?</div><div style="font-size:12px;color:var(--info);margin-top:6px">ncbi.nlm.nih.gov/clinvar \u2192</div></div></div></div>'
 
@@ -442,10 +560,22 @@ return '<h2>Hands-on: Explore the Mutations</h2><div class="sub">Search these da
 +'<div class="card db-card" onclick="window.open(\'https://molstar.org/viewer/?pdb=4p7e\',\'_blank\')"><div style="display:flex;align-items:flex-start;gap:12px"><div style="width:40px;height:40px;border-radius:var(--r);background:var(--bg2);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0">\ud83e\uddf6</div><div style="flex:1"><div style="font-weight:600;font-size:14px;margin-bottom:4px">Mol* 3D \u2014 JAK2</div><div style="font-size:12px;color:var(--t2);line-height:1.5">PDB: 4P7E. Find V617F in the pseudokinase-kinase interface.</div><div style="font-size:11px;color:var(--info);margin-top:4px">molstar.org \u2192</div></div></div></div>'
 +'</div>'
 
-+'<div class="card ac-teal" style="margin-top:16px"><div style="font-weight:600;font-size:16px;margin-bottom:12px">VAF interactive explorer</div><div style="font-size:13px;color:var(--t2);margin-bottom:12px">How do sample composition, copy number, LOH, and subclonality affect the observed VAF? Select a scenario and adjust the sliders.</div><div style="font-size:13px;font-weight:600;margin-bottom:6px">Allelic state presets</div><div class="vaf-scenarios" id="vaf-sc-container"></div><div id="vaf-chr" class="chr-vis"></div><div id="vaf-form" class="vaf-formula"></div><div style="font-size:13px;font-weight:600;margin-bottom:6px">Parameters</div><div class="slider-group"><label>Neoplastic hem. cells (%)</label><input type="range" min="5" max="100" value="80" step="1" id="vaf-pur" oninput="vafUpdate()" style="flex:1"><span class="val" id="vaf-pur-v">80%</span></div><div class="slider-group"><label>Clone fraction (CCF)</label><input type="range" min="5" max="100" value="100" step="1" id="vaf-ccf" oninput="vafUpdate()" style="flex:1"><span class="val" id="vaf-ccf-v">100%</span></div><div class="slider-group"><label>Copies at locus (tumor)</label><input type="range" min="0" max="6" value="2" step="1" id="vaf-ct" oninput="vafUpdate()" style="flex:1"><span class="val" id="vaf-ct-v">2</span></div><div class="slider-group"><label>Copies with mutation</label><input type="range" min="0" max="6" value="1" step="1" id="vaf-m" oninput="vafUpdate()" style="flex:1"><span class="val" id="vaf-m-v">1</span></div><div id="vaf-res" class="vaf-results"></div><div class="collapsible" style="margin-top:12px"><div class="collapsible-header" onclick="toggleCollapsible(this)">Reverse calculator: observed VAF \u2192 clone fraction <span class="arrow">\u25b6</span></div><div class="collapsible-body"><div style="font-size:13px;color:var(--t2);margin-bottom:8px;line-height:1.6">Given an observed VAF and the allelic state above, this estimates what fraction of neoplastic cells carry the mutation (cancer cell fraction / CCF). If CCF >100%, the allelic state assumption is wrong \u2014 consider LOH or copy gain.</div><div class="slider-group"><label>Observed VAF (%)</label><input type="range" min="0.5" max="60" value="4.1" step="0.1" id="vaf-obs" oninput="vafReverse()" style="flex:1"><span class="val" id="vaf-obs-v">4.1%</span></div><div id="vaf-rev-res" class="vaf-results" style="margin-bottom:0"></div><div class="vaf-note" id="vaf-rev-note"></div></div></div><div style="font-size:13px;font-weight:600;margin-bottom:6px;margin-top:12px">Load case mutations</div><div class="case-btns" id="vaf-case-btns"></div></div>';
++prompt("But Wait... Are you missing any information?")
+
++'<button class="reveal-btn" onclick="revealEl(\'vaf-reveal\')">Oh Yes!\u2026 what\u2019s the VAF?</button>'
+
++'<div class="reveal-area" id="vaf-reveal"><div class="card"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px"><div style="font-weight:600;font-size:15px">Now with VAF revealed</div></div><div class="mt-table"><div class="mt-hdr"><span>Gene</span><span>Coding</span><span>Protein</span><span>VAF</span><span>Tier</span></div><div class="mt-row"><span class="gene">TP53</span><span class="cod">c.673-2A&gt;G</span><span class="prot">p.? (splice)</span><span class="vaf">4.1%</span><span class="badge badge-danger">1/2</span></div><div class="mt-row"><span class="gene">TP53</span><span class="cod">c.524G&gt;A</span><span class="prot">p.Arg175His</span><span class="vaf">2.2%</span><span class="badge badge-danger">1/2</span></div><div class="mt-row"><span class="gene">TP53</span><span class="cod">c.395A&gt;T</span><span class="prot">p.Lys132Met</span><span class="vaf">3.4%</span><span class="badge badge-danger">1/2</span></div></div></div>'+prompt("Why is the VAF so low?")+prompt("What is the tumor content in the sample?")+'</div>'
++'</div>';
 }
 
 function sec8(){
+return '<h2>Hands-on: Explore the VAF interpretation</h2><div class="sub">Play with the sliders on your device \u2014 10 minutes</div>'
+
+
++'<div class="card ac-teal" style="margin-top:16px"><div style="font-weight:600;font-size:16px;margin-bottom:12px">VAF interactive explorer</div><div style="font-size:13px;color:var(--t2);margin-bottom:12px">How do sample composition, copy number, LOH, and subclonality affect the observed VAF? Select a scenario and adjust the sliders.</div><div style="font-size:13px;font-weight:600;margin-bottom:6px">Allelic state presets</div><div class="vaf-scenarios" id="vaf-sc-container"></div><div id="vaf-chr" class="chr-vis"></div><div id="vaf-form" class="vaf-formula"></div><div style="font-size:13px;font-weight:600;margin-bottom:6px">Parameters</div><div class="slider-group"><label>Neoplastic hem. cells (%)</label><input type="range" min="5" max="100" value="80" step="1" id="vaf-pur" oninput="vafUpdate()" style="flex:1"><span class="val" id="vaf-pur-v">80%</span></div><div class="slider-group"><label>Clone fraction (CCF)</label><input type="range" min="5" max="100" value="100" step="1" id="vaf-ccf" oninput="vafUpdate()" style="flex:1"><span class="val" id="vaf-ccf-v">100%</span></div><div class="slider-group"><label>Copies at locus (tumor)</label><input type="range" min="0" max="6" value="2" step="1" id="vaf-ct" oninput="vafUpdate()" style="flex:1"><span class="val" id="vaf-ct-v">2</span></div><div class="slider-group"><label>Copies with mutation</label><input type="range" min="0" max="6" value="1" step="1" id="vaf-m" oninput="vafUpdate()" style="flex:1"><span class="val" id="vaf-m-v">1</span></div><div id="vaf-res" class="vaf-results"></div><div class="collapsible" style="margin-top:12px"><div class="collapsible-header" onclick="toggleCollapsible(this)">Reverse calculator: observed VAF \u2192 clone fraction <span class="arrow">\u25b6</span></div><div class="collapsible-body"><div style="font-size:13px;color:var(--t2);margin-bottom:8px;line-height:1.6">Given an observed VAF and the allelic state above, this estimates what fraction of neoplastic cells carry the mutation (cancer cell fraction / CCF). If CCF >100%, the allelic state assumption is wrong \u2014 consider LOH or copy gain.</div><div class="slider-group"><label>Observed VAF (%)</label><input type="range" min="0.5" max="60" value="4.1" step="0.1" id="vaf-obs" oninput="vafReverse()" style="flex:1"><span class="val" id="vaf-obs-v">4.1%</span></div><div id="vaf-rev-res" class="vaf-results" style="margin-bottom:0"></div><div class="vaf-note" id="vaf-rev-note"></div></div></div><div style="font-size:13px;font-weight:600;margin-bottom:6px;margin-top:12px">Load case mutations</div><div class="case-btns" id="vaf-case-btns"></div></div>';
+}
+
+function sec9(){
 return '<h2>P53 Immunohistochemistry</h2><div class="sub">Correlating NGS with IHC</div>'
 +img('p53_ihc.jpg','P53 IHC \u2014 bone marrow biopsy')
 
@@ -457,14 +587,11 @@ return '<h2>P53 Immunohistochemistry</h2><div class="sub">Correlating NGS with I
 
 +prompt("With 3 TP53 mutations at low VAFs, is this multi-hit TP53? What is the allelic state?")
 
-+'<div class="card"><div style="font-weight:600;font-size:15px;margin-bottom:12px">Clinical vs Lab Prompts</div><div class="g2"><div><div style="font-weight:600;margin-bottom:6px;color:var(--info)">Clinical</div><div style="line-height:1.8;color:var(--t2);font-size:14px">MPN?<br>MDS?<br>MDS/MPN?</div></div><div><div style="font-weight:600;margin-bottom:6px;color:var(--warn)">Molecular / Lab</div><div style="line-height:1.8;color:var(--t2);font-size:14px">Are we sure there is no driver mutation?<br>Anything else to order?</div></div></div></div>'
-
-+menti(2,"What is your working diagnosis? MPN vs MDS vs MDS/MPN?")
-+menti(3,"Treatment approach: Azacitidine? Refer to transplant?")
-+menti(4,"Any missing tests? Should we order higher-sensitivity MPN driver testing?");
++menti(4,"What is your working diagnosis? MPN vs MDS vs MDS/MPN?")
++menti(5,"Any missing tests? Have we excluded an MPN driver mutation?");
 }
 
-function sec9(){
+function sec10(){
 return '<h2>Higher Sensitivity MPN Driver Testing (AS-PCR)</h2><div class="sub">Sunnybrook allele-specific PCR results</div>'
 
 +'<div class="card"><div style="font-weight:600;font-size:15px;margin-bottom:12px">Results</div><div class="g2"><div class="finding"><div class="lb">JAK2 p.V617F</div><div class="vl" style="font-weight:600">Not detected</div><div style="font-size:11px;color:var(--t3);margin-top:2px">LOD: 0.5-1%</div></div><div class="finding"><div class="lb">CALR exon 9</div><div class="vl" style="font-weight:600">Not detected</div><div style="font-size:11px;color:var(--t3);margin-top:2px">LOD: 1-2%</div></div></div></div>'
@@ -477,12 +604,12 @@ return '<h2>Higher Sensitivity MPN Driver Testing (AS-PCR)</h2><div class="sub">
 +'<div class="reveal-area" id="dx-reveal"><h2 style="margin-top:12px">Consensus Diagnosis</h2><div class="sub">Based on all available data</div>'
 +'<div class="card ac-info" style="text-align:center;padding:2rem"><span class="badge badge-info">Consensus</span><div style="font-size:28px;font-weight:600;margin:16px 0 8px">MDS with Fibrosis (MDS-F)</div><div style="font-size:14px;color:var(--t2)">Hypercellular marrow \u00b7 megakaryocyte atypia \u00b7 reticulin fibrosis MF2/3<br>Multi-hit TP53 \u00b7 Del(5q) \u00b7 KMT2A gain \u00b7 Complex karyotype (by OGM)<br>JAK2/CALR negative (AS-PCR)</div></div>'
 
-+prompt("Do you agree with this diagnosis?")
-+prompt("What is the expected prognosis with multi-hit TP53 and del(5q) in MDS?")
++prompt("Thoughts? Do you agree with this diagnosis? Would you have classified this differently before seeing the OGM results?")
+
 +'</div></div>';
 }
 
-function sec10(){
+function sec11(){
 return '<h2>Bonus: You Don\u2019t Know JAK\u2026</h2><div class="sub">If you are not tired with us!</div>'
 
 +'<div class="card"><div style="font-size:15px;line-height:1.7;color:var(--t2)">Additional testing was performed at UHN using a higher-sensitivity NGS assay\u2026</div></div>'
@@ -502,7 +629,7 @@ return '<h2>Bonus: You Don\u2019t Know JAK\u2026</h2><div class="sub">If you are
 +prompt("At what VAF does JAK2 V617F become clinically meaningful?");
 }
 
-function sec11(){
+function sec12(){
 var v=S.spectrumVAF;
 var pos=Math.min(95,Math.max(5,v*3));
 
