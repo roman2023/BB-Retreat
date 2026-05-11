@@ -266,64 +266,63 @@ document.getElementById('app').innerHTML='<div class="nav">'+nav+'</div><div cla
 if(s.id==='s8'){initVafExplorer();}
 }
 
-function initVafExplorer(){
-var sc=document.getElementById('vaf-sc-container');
-if(!sc)return;
-sc.innerHTML='';
-VAF_SCENARIOS.forEach(function(s,i){
-var d=document.createElement('div');
-d.className='vaf-sc'+(i===vafSc?' active':'');
-d.innerHTML='<div class="sn">'+s.name+'</div><div class="sd">'+s.desc+'</div>';
-d.onclick=function(){vafSelectSc(i)};
-sc.appendChild(d);
-});
-var cb=document.getElementById('vaf-case-btns');
-if(cb){cb.innerHTML='';VAF_CASES.forEach(function(c,i){
-var b=document.createElement('button');
-b.className='case-btn';
-b.textContent=c.label+' (VAF '+c.vaf+'%)';
-b.onclick=function(){vafLoadCase(i)};
-cb.appendChild(b);
-});}
-vafUpdate();
-}
+/* --- VAF EXPLORER DATA & LOGIC --- */
 
-function go(i){S.stage=i;render();window.scrollTo(0,0)}
-function next(){if(S.stage<STAGES.length-1){S.stage++;render();window.scrollTo(0,0)}}
-function prev(){if(S.stage>0){S.stage--;render();window.scrollTo(0,0)}}
-function updateSV(v){S.spectrumVAF=+v;document.getElementById('sv').textContent=v+'%';document.getElementById('sm').style.left=Math.min(95,Math.max(5,v*3))+'%'}
-
-var VAF_SCENARIOS=[
-{name:'Diploid heterozygous',desc:'Standard somatic SNV',ct:2,m:1,chr:['wt','mut']},
-{name:'LOH by deletion',desc:'Lost wild-type allele',ct:1,m:1,chr:['del','mut']},
-{name:'Copy-neutral LOH',desc:'UPD: duplicated mutant',ct:2,m:2,chr:['mut','dup']},
-{name:'Gain of mutant',desc:'Trisomy, 2 mut + 1 WT',ct:3,m:2,chr:['wt','mut','dup']},
-{name:'Gain of wild-type',desc:'Trisomy, 1 mut + 2 WT',ct:3,m:1,chr:['wt','wt','mut']},
-{name:'Homozygous deletion',desc:'Both alleles lost',ct:0,m:0,chr:['del','del']},
-{name:'Tetraploid het',desc:'4 copies, 1 mutant',ct:4,m:1,chr:['wt','wt','wt','mut']},
-{name:'Biallelic (2 hits)',desc:'Two different mutations',ct:2,m:2,chr:['mut','dup']},
-{name:'Custom', desc:'Manually adjust copy numbers', ct:2, m:1, chr:['wt','mut']}
+var VAF_SCENARIOS = [
+  {name:'Diploid heterozygous', desc:'Standard somatic SNV', ct:2, m:1, chr:['wt','mut']},
+  {name:'LOH by deletion', desc:'Lost wild-type allele', ct:1, m:1, chr:['del','mut']},
+  {name:'Copy-neutral LOH', desc:'UPD: duplicated mutant', ct:2, m:2, chr:['mut','dup']},
+  {name:'Gain of mutant', desc:'Trisomy, 2 mut + 1 WT', ct:3, m:2, chr:['wt','mut','dup']},
+  {name:'Gain of wild-type', desc:'Trisomy, 1 mut + 2 WT', ct:3, m:1, chr:['wt','wt','mut']},
+  {name:'Homozygous deletion', desc:'Both alleles lost', ct:0, m:0, chr:['del','del']},
+  {name:'Tetraploid het', desc:'4 copies, 1 mutant', ct:4, m:1, chr:['wt','wt','wt','mut']},
+  {name:'Biallelic (2 hits)', desc:'Two different mutations', ct:2, m:2, chr:['mut','dup']},
+  {name:'Custom', desc:'Manually adjust copy numbers', ct:2, m:1, chr:['wt','mut']}
 ];
-var VAF_CASES=[
-{label:'TP53 splice c.673-2A>G',vaf:4.1,pur:80},
-{label:'TP53 R175H',vaf:2.2,pur:80},
-{label:'TP53 K132M',vaf:3.4,pur:80},
-{label:'JAK2 V617F (Jan)',vaf:1,pur:80},
-{label:'JAK2 V617F (Nov)',vaf:9,pur:80}
-];
-var vafSc=0;
 
-function vafCalcExpected(p,ccf,ct,m){
-if(ct===0)return 0;
-var num=(p/100)*(ccf/100)*m;
-var den=(p/100)*ct+(1-p/100)*2;
-return den===0?0:(num/den)*100;
+var VAF_CASES = [
+  {label:'TP53 splice c.673-2A>G', vaf:4.1, pur:80},
+  {label:'TP53 R175H', vaf:2.2, pur:80},
+  {label:'TP53 K132M', vaf:3.4, pur:80}
+];
+
+var vafSc = 0;
+
+/** * Initializes the explorer UI. 
+ * Called by render() when the current stage is s8.
+ */
+function initVafExplorer() {
+  const sc = document.getElementById('vaf-sc-container');
+  if (!sc) return;
+  
+  // 1. Clear and Build Allelic State Presets
+  sc.innerHTML = '';
+  VAF_SCENARIOS.forEach(function(s, i) {
+    const d = document.createElement('div');
+    d.className = 'vaf-sc' + (i === vafSc ? ' active' : '');
+    d.innerHTML = `<div class="sn">${s.name}</div><div class="sd">${s.desc}</div>`;
+    d.onclick = function() { vafSelectSc(i); };
+    sc.appendChild(d);
+  });
+
+  // 2. Build Case Mutation Buttons
+  const cb = document.getElementById('vaf-case-btns');
+  if (cb) {
+    cb.innerHTML = '';
+    VAF_CASES.forEach(function(c, i) {
+      const b = document.createElement('button');
+      b.className = 'case-btn';
+      b.textContent = `${c.label} (VAF ${c.vaf}%)`;
+      b.onclick = function() { vafLoadCase(i); };
+      cb.appendChild(b);
+    });
+  }
+
+  // 3. Force initial state selection (Engages locks/padlocks immediately)
+  vafSelectSc(0);
 }
-function vafCalcCCF(obsVaf,p,ct,m){
-if(m===0)return null;
-var den=(p/100)*ct+(1-p/100)*2;
-return Math.min(((obsVaf/100)*den)/((p/100)*m)*100,999);
-}
+
+/** Handles selection of a preset and locks/unlocks sliders */
 function vafSelectSc(i) {
   vafSc = i;
   const s = VAF_SCENARIOS[i];
@@ -333,92 +332,133 @@ function vafSelectSc(i) {
   const ctLabelEl = document.getElementById('label-vaf-ct');
   const mLabelEl = document.getElementById('label-vaf-m');
   
-  // 1. Set the values based on the selected preset
+  if (!ctInput || !mInput) return;
+
+  // Set preset values
   ctInput.value = s.ct;
   mInput.value = s.m;
   mInput.max = Math.max(s.ct, 0);
 
-  const ctLabelText = 'Copies at locus (tumor)';
-  const mLabelText = 'Copies with mutation';
-
-  // 2. Lock/Unlock Logic with Padlocks
   const isCustom = (s.name === 'Custom');
-  
+  const lockIcon = isCustom ? "🔓" : "🔒";
+  const opacity = isCustom ? "1" : "0.5";
+
+  // Apply Lock/Unlock
   ctInput.disabled = !isCustom;
   mInput.disabled = !isCustom;
-  
-  // Adjust visuals for disabled state
-  const opacity = isCustom ? "1" : "0.5";
-  const lockIcon = isCustom ? "🔓" : "🔒";
-  
   ctInput.style.opacity = opacity;
   mInput.style.opacity = opacity;
 
-  // Update labels if the elements exist
-  if (ctLabelEl) ctLabelEl.innerHTML = `${lockIcon} ${ctLabelText}`;
-  if (mLabelEl) mLabelEl.innerHTML = `${lockIcon} ${mLabelText}`;
+  // Update Labels with Padlocks
+  if (ctLabelEl) ctLabelEl.innerHTML = `${lockIcon} Copies at locus (tumor)`;
+  if (mLabelEl) mLabelEl.innerHTML = `${lockIcon} Copies with mutation`;
 
-  // 3. Handle 'active' class highlight properly
-  document.querySelectorAll('.vaf-sc').forEach((btn, index) => {
-    if (index === i) {
-      btn.classList.add('active');
-    } else {
-      btn.classList.remove('active');
-    }
+  // Highlight Active Button
+  document.querySelectorAll('.vaf-sc').forEach((btn, idx) => {
+    btn.classList.toggle('active', idx === i);
   });
   
-  // 4. Trigger the math update to refresh the formula and diagram
   vafUpdate();
-};
-  
+}
 
-function vafLoadCase(i){
-var c=VAF_CASES[i];
-document.getElementById('vaf-pur').value=c.pur;
-document.getElementById('vaf-obs').value=c.vaf;
-vafSc=0;
-document.getElementById('vaf-ct').value=2;
-document.getElementById('vaf-m').value=1;
-document.getElementById('vaf-m').max=2;
-document.querySelectorAll('.vaf-sc').forEach(function(el,j){el.className='vaf-sc'+(j===0?' active':'')});
-vafUpdate();
+function vafLoadCase(i) {
+  const c = VAF_CASES[i];
+  document.getElementById('vaf-pur').value = c.pur;
+  document.getElementById('vaf-obs').value = c.vaf;
+  vafSelectSc(0); // Default to Diploid Het for cases
 }
-function vafUpdate(){
-var p=+document.getElementById('vaf-pur').value;
-var ccf=+document.getElementById('vaf-ccf').value;
-var ct=+document.getElementById('vaf-ct').value;
-var m=Math.min(+document.getElementById('vaf-m').value,ct);
-document.getElementById('vaf-m').value=m;
-document.getElementById('vaf-m').max=Math.max(ct,0);
-document.getElementById('vaf-pur-v').textContent=p+'%';
-document.getElementById('vaf-ccf-v').textContent=ccf+'%';
-document.getElementById('vaf-ct-v').textContent=ct;
-document.getElementById('vaf-m-v').textContent=m;
-var vaf=vafCalcExpected(p,ccf,ct,m);
-var pureVaf=ct>0?Math.round(m/ct*100):0;
-document.getElementById('vaf-res').innerHTML='<div class="vaf-metric"><div class="vml">Expected VAF</div><div class="vmn" style="color:var(--info)">'+Math.round(vaf*10)/10+'%</div></div><div class="vaf-metric"><div class="vml">Mutant : total</div><div class="vmn">'+m+' : '+ct+'</div></div><div class="vaf-metric"><div class="vml">If 100% pure</div><div class="vmn">'+(ct>0?pureVaf+'%':'N/A')+'</div></div>';
-document.getElementById('vaf-form').innerHTML='VAF = (<span class="hl">p</span> \u00d7 <span class="hw">CCF</span> \u00d7 <span class="hd">m</span>) \u00f7 (<span class="hl">p</span> \u00d7 Ct + (1\u2212<span class="hl">p</span>) \u00d7 2)<br>VAF = (<span class="hl">'+(p/100)+'</span> \u00d7 <span class="hw">'+(ccf/100)+'</span> \u00d7 <span class="hd">'+m+'</span>) \u00f7 (<span class="hl">'+(p/100)+'</span> \u00d7 '+ct+' + '+(1-p/100).toFixed(2)+' \u00d7 2)<br>VAF = <strong style="font-size:15px">'+Math.round(vaf*10)/10+'%</strong>';
-var s=VAF_SCENARIOS[vafSc];
-var ch='<div class="chr-pair"><div class="cl">Tumor cell</div><div class="chr-bars">';
-s.chr.forEach(function(c){ch+='<div class="chr-b '+c+'"></div>'});
-ch+='</div><div class="cc">'+ct+' copies, '+m+' mutant</div></div><div class="chr-pair"><div class="cl">Normal cell</div><div class="chr-bars"><div class="chr-b wt"></div><div class="chr-b wt"></div></div><div class="cc">2 copies, 0 mutant</div></div>';
-document.getElementById('vaf-chr').innerHTML=ch;
-vafReverse();
+
+/* --- MATH ENGINE --- */
+
+function vafCalcExpected(p, ccf, ct, m) {
+  if (ct === 0) return 0;
+  const num = (p / 100) * (ccf / 100) * m;
+  const den = (p / 100) * ct + (1 - p / 100) * 2;
+  return den === 0 ? 0 : (num / den) * 100;
 }
-function vafReverse(){
-var obs=+document.getElementById('vaf-obs').value;
-var p=+document.getElementById('vaf-pur').value;
-var ct=+document.getElementById('vaf-ct').value;
-var m=Math.min(+document.getElementById('vaf-m').value,ct);
-document.getElementById('vaf-obs-v').textContent=obs+'%';
-var ccfE=vafCalcCCF(obs,p,ct,m);
-var disp='N/A',note='';
-if(ccfE===null||m===0){note='Cannot estimate with 0 mutant copies.';}
-else if(ccfE>100){disp='>100%';note='CCF exceeds 100% \u2014 consider LOH, copy gain of mutant allele, or lower purity than estimated.';}
-else{disp=Math.round(ccfE)+'%';note=ccfE>90?'Likely clonal (present in nearly all tumor cells).':ccfE>50?'Present in a major subclone.':'Subclonal \u2014 present in a minority of tumor cells.';}
-document.getElementById('vaf-rev-res').innerHTML='<div class="vaf-metric"><div class="vml">Observed VAF</div><div class="vmn">'+obs+'%</div></div><div class="vaf-metric"><div class="vml">Estimated CCF</div><div class="vmn" style="color:var(--warn)">'+disp+'</div></div><div class="vaf-metric"><div class="vml">Allelic state</div><div class="vmn" style="font-size:13px">'+VAF_SCENARIOS[vafSc].name+'</div></div>';
-document.getElementById('vaf-rev-note').textContent=note;
+
+function vafCalcCCF(obsVaf, p, ct, m) {
+  if (m === 0) return null;
+  const den = (p / 100) * ct + (1 - p / 100) * 2;
+  return Math.min(((obsVaf / 100) * den) / ((p / 100) * m) * 100, 999);
 }
+
+function vafUpdate() {
+  const p = +document.getElementById('vaf-pur').value;
+  const ccf = +document.getElementById('vaf-ccf').value;
+  const ct = +document.getElementById('vaf-ct').value;
+  const m = Math.min(+document.getElementById('vaf-m').value, ct);
+  
+  document.getElementById('vaf-m').value = m;
+  document.getElementById('vaf-m').max = Math.max(ct, 0);
+  
+  document.getElementById('vaf-pur-v').textContent = p + '%';
+  document.getElementById('vaf-ccf-v').textContent = ccf + '%';
+  document.getElementById('vaf-ct-v').textContent = ct;
+  document.getElementById('vaf-m-v').textContent = m;
+
+  const vaf = vafCalcExpected(p, ccf, ct, m);
+  const pureVaf = ct > 0 ? Math.round((m / ct) * 100) : 0;
+
+  // Update Result Cards
+  document.getElementById('vaf-res').innerHTML = `
+    <div class="vaf-metric"><div class="vml">Expected VAF</div><div class="vmn" style="color:var(--info)">${Math.round(vaf * 10) / 10}%</div></div>
+    <div class="vaf-metric"><div class="vml">Mutant : total</div><div class="vmn">${m} : ${ct}</div></div>
+    <div class="vaf-metric"><div class="vml">If 100% pure</div><div class="vmn">${ct > 0 ? pureVaf + '%' : 'N/A'}</div></div>
+  `;
+
+  // Update Formula String
+  document.getElementById('vaf-form').innerHTML = `
+    VAF = (<span class="hl">p</span> × <span class="hw">CCF</span> × <span class="hd">m</span>) ÷ (<span class="hl">p</span> × Ct + (1−<span class="hl">p</span>) × 2)<br>
+    VAF = (<span class="hl">${p / 100}</span> × <span class="hw">${ccf / 100}</span> × <span class="hd">${m}</span>) ÷ (<span class="hl">${p / 100}</span> × ${ct} + ${(1 - p / 100).toFixed(2)} × 2)<br>
+    VAF = <strong style="font-size:15px">${Math.round(vaf * 10) / 10}%</strong>
+  `;
+
+  // Update Visual Diagram
+  const s = VAF_SCENARIOS[vafSc];
+  let ch = '<div class="chr-pair"><div class="cl">Tumor cell</div><div class="chr-bars">';
+  s.chr.forEach(c => { ch += `<div class="chr-b ${c}"></div>`; });
+  ch += `</div><div class="cc">${ct} copies, ${m} mutant</div></div>`;
+  ch += '<div class="chr-pair"><div class="cl">Normal cell</div><div class="chr-bars"><div class="chr-b wt"></div><div class="chr-b wt"></div></div><div class="cc">2 copies, 0 mutant</div></div>';
+  document.getElementById('vaf-chr').innerHTML = ch;
+
+  vafReverse();
+}
+
+function vafReverse() {
+  const obs = +document.getElementById('vaf-obs').value;
+  const p = +document.getElementById('vaf-pur').value;
+  const ct = +document.getElementById('vaf-ct').value;
+  const m = Math.min(+document.getElementById('vaf-m').value, ct);
+  
+  document.getElementById('vaf-obs-v').textContent = obs + '%';
+  const ccfE = vafCalcCCF(obs, p, ct, m);
+  let disp = 'N/A', note = '';
+
+  if (ccfE === null || m === 0) {
+    note = 'Cannot estimate with 0 mutant copies.';
+  } else if (ccfE > 100) {
+    disp = '>100%';
+    note = 'CCF exceeds 100% — consider LOH or lower purity.';
+  } else {
+    disp = Math.round(ccfE) + '%';
+    note = ccfE > 90 ? 'Likely clonal.' : ccfE > 50 ? 'Major subclone.' : 'Minor subclone.';
+  }
+
+  document.getElementById('vaf-rev-res').innerHTML = `
+    <div class="vaf-metric"><div class="vml">Observed VAF</div><div class="vmn">${obs}%</div></div>
+    <div class="vaf-metric"><div class="vml">Estimated CCF</div><div class="vmn" style="color:var(--warn)">${disp}</div></div>
+    <div class="vaf-metric"><div class="vml">Allelic state</div><div class="vmn" style="font-size:13px">${VAF_SCENARIOS[vafSc].name}</div></div>
+  `;
+  document.getElementById('vaf-rev-note').textContent = note;
+}
+
+/* --- NAVIGATION & HELPERS --- */
+
+function go(i){S.stage=i; render(); window.scrollTo(0,0)}
+function next(){if(S.stage<STAGES.length-1){S.stage++; render(); window.scrollTo(0,0)}}
+function prev(){if(S.stage>0){S.stage--; render(); window.scrollTo(0,0)}}
+function updateSV(v){S.spectrumVAF=+v; document.getElementById('sv').textContent=v+'%'; document.getElementById('sm').style.left=Math.min(95,Math.max(5,v*3))+'%'}
 
 
 function menti(pollNum,question){
@@ -539,6 +579,8 @@ return '<h2>Genomic Investigations</h2><div class="sub">Requested from periphera
 
 +'<div class="card ac-warn"><div style="font-weight:600;font-size:15px;margin-bottom:8px">Discussion: Why NGS on both DNA and RNA?</div><div style="font-size:13px;line-height:1.7;color:var(--t2)"><p style="margin-bottom:8px"><strong>DNA panel:</strong> Detects point mutations, small indels, splice site variants. Cannot detect gene fusions without specific breakpoint primers.</p><p><strong>RNA panel:</strong> Detects fusion transcripts (e.g. BCR::ABL1, PML::RARA, KMT2A fusions) regardless of the genomic breakpoint location. Essential for AML/ALL where fusions are diagnostic and therapeutic targets.</p></div></div>'
 
++img('dna.rna.png','DNA vs RNA sequencing panels')
+
 +prompt("What do these variants mean? What is tier1/2/3?")
 
 
@@ -612,10 +654,10 @@ return '<h2>Higher Sensitivity MPN Driver Testing (AS-PCR)</h2><div class="sub">
 function sec11(){
 return '<h2>Bonus: You Don\u2019t Know JAK\u2026</h2><div class="sub">If you are not tired with us!</div>'
 
-+'<div class="card"><div style="font-size:15px;line-height:1.7;color:var(--t2)">Additional testing was performed at UHN using a higher-sensitivity NGS assay\u2026</div></div>'
++'<div class="card"><div style="font-size:15px;line-height:1.7;color:var(--t2)">Sensitivity of NGS assays\u2026</div></div>'
 
 +'<div class="card ac-danger"><div style="font-weight:600;font-size:15px;margin-bottom:16px;color:var(--danger)">JAK2 V617F \u2014 Serial Testing at UHN</div>'
-+img('jak2_testing.png','JAK2 testing timeline')
++img('jak2_testing.png','JAK2 testing timeline', true)
 +'<div class="timeline">'
 +'<div class="tp"><div class="dot empty"></div><div><div style="display:flex;align-items:baseline;gap:8px;flex-wrap:wrap"><strong>Diagnosis (Sunnybrook)</strong><span style="font-size:12px;color:var(--t3)">AS-PCR</span></div><div style="font-size:13px;color:var(--t2);margin-top:2px">Not detected</div><div style="font-size:12px;color:var(--t3)">Sensitivity: 0.5-1%</div></div></div>'
 +'<div class="tp"><div class="dot warn"></div><div><div style="display:flex;align-items:baseline;gap:8px;flex-wrap:wrap"><strong>Jan (UHN)</strong><span style="font-size:12px;color:var(--t3)">UHN NGS</span></div><div style="font-size:13px;color:var(--warn);font-weight:600;margin-top:2px">Low level detected <span style="font-weight:400;color:var(--t2)">\u2014 VAF ~1%</span></div><div style="font-size:12px;color:var(--t3)">Sensitivity: &lt;0.1%</div></div></div>'
@@ -623,9 +665,8 @@ return '<h2>Bonus: You Don\u2019t Know JAK\u2026</h2><div class="sub">If you are
 +'<div class="tp"><div class="dot warn"></div><div><div style="display:flex;align-items:baseline;gap:8px;flex-wrap:wrap"><strong>Nov (UHN)</strong><span style="font-size:12px;color:var(--t3)">UHN NGS</span></div><div style="font-size:13px;color:var(--danger);font-weight:600;margin-top:2px">Detected <span style="font-weight:400;color:var(--t2)">\u2014 VAF ~9%</span></div><div style="font-size:12px;color:var(--t3)">Sensitivity: &lt;0.1%</div></div></div>'
 +'</div></div>'
 
-+'<div class="card ac-warn"><div style="font-weight:600;font-size:15px;margin-bottom:8px">Why was it missed?</div><div style="font-size:13px;line-height:1.7;color:var(--t2)"><p style="margin-bottom:8px">The initial Sunnybrook AS-PCR has a limit of detection of 0.5-1%. The JAK2 V617F was present below this threshold at diagnosis.</p><p style="margin-bottom:8px">UHN\u2019s NGS-based assay has much higher sensitivity (&lt;0.1%), detecting the low-level clone.</p><p style="font-weight:600;color:var(--t)">Assay sensitivity determines diagnosis. The biology didn\u2019t change \u2014 our ability to detect it did.</p></div></div>'
++'<div class="card ac-warn"><div style="font-weight:600;font-size:15px;margin-bottom:8px">Why was it missed?</div><div style="font-size:13px;line-height:1.7;color:var(--t2)"><p style="margin-bottom:8px">Sunnybrook AS-PCR has a limit of detection of 0.5-1%. The JAK2 V617F was present below this threshold at diagnosis.</p><p style="margin-bottom:8px">UHN\u2019s NGS-based assay has much higher sensitivity (&lt;0.1%), detecting the low-level clone.</p><p style="font-weight:600;color:var(--t)">Assay sensitivity determines diagnosis. The biology didn\u2019t change \u2014 our ability to detect it did.</p></div></div>'
 
-+prompt("Does this change the diagnosis? Is this still MDS-F, or MPN with fibrosis, or MDS/MPN?")
 +prompt("At what VAF does JAK2 V617F become clinically meaningful?");
 }
 
@@ -635,7 +676,7 @@ var pos=Math.min(95,Math.max(5,v*3));
 
 return '<h2>When is JAK2 V617F CH(IP) vs MPN?</h2><div class="sub">Is JAK2 a different kind of CH(IP)? Is this dependent on VAF?</div>'
 +img('ch_spectrum.png','JAK2 V617F clonal hematopoiesis and cardiovascular disease (J Cardiology 2023)')
-+'<div class="g2">'+img('ch_diagram1.png','CH progression model')+img('ch_diagram2.png','CH to MPN spectrum')+'</div>'
++'<div class="g2">'+img('ch_diagram1.png','CH progression model', true)+img('ch_diagram2.png','CH to MPN spectrum', true)+'</div>'
 
 +'<div style="margin-top:16px;font-size:13px;color:var(--t2);margin-bottom:12px">Drag the slider to explore the CH \u2192 MPN continuum:</div>'
 +'<div class="slider-group"><label>JAK2 V617F VAF</label><input type="range" min="0.5" max="50" step="0.5" value="'+v+'" oninput="updateSV(this.value)"><span class="val" id="sv">'+v+'%</span></div>'
